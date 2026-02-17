@@ -4,6 +4,16 @@ import shutil
 import sys
 import json
 import os
+import re
+
+def load_json_with_comments(path):
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+    # 使用正则表达式去除 // 开头的单行注释
+    # 注意：这个简单的正则假设 // 不会出现在字符串内部（例如 url）
+    # 如果你的 json 里有 https://... 这种 url，用下面这个更严谨的正则：
+    content = re.sub(r'(?<!:)//.*', '', content) 
+    return json.loads(content)
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(script_dir)
@@ -68,7 +78,8 @@ def install_resource():
     )
 
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
-        interface = json.load(f)
+        # interface = json.load(f)
+        interface = load_json_with_comments(f)
 
     interface["version"] = version
     interface["title"] = f"MAAGirlsWar {version}"
@@ -99,7 +110,8 @@ def install_agent():
     )
 
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
-        interface = json.load(f)
+        # interface = json.load(f)
+        interface = load_json_with_comments(f)
 
     if sys.platform.startswith("win"):
         interface["agent"]["child_exec"] = r"./python/python.exe"
