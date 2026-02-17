@@ -53,16 +53,12 @@ def install_maa_runtimes(platform_tag: str):
     )
 
 def check_python_environment():
-    """【修改】确认 Python 环境存在于 install/python"""
     print(">> Checking Python environment...")
-    
-    # 根据日志，Python 已经被 setup_embed_python.py 放到了 install/python
     target_python = install_path / "python" / "python.exe"
     
     if target_python.exists():
         print(f"   Python found at: {target_python}")
     else:
-        # 如果万一不在，尝试从根目录找（兜底）
         src_python = working_dir / "python"
         if src_python.exists():
              print(f"   Copying Python from {src_python}...")
@@ -71,11 +67,7 @@ def check_python_environment():
              raise FileNotFoundError(f"Critical: Python executable not found at {target_python}")
 
 def install_python_wheels():
-    """复制 deps (whl包)"""
     print(">> Installing Python wheels (deps)...")
-    
-    # 这里的 deps 是由 download_deps.py 生成的 whl 目录
-    # 我们在 install.yml 里指定了它下载到根目录的 'deps'
     src = working_dir / "deps"
     dst = install_path / "deps"
     
@@ -129,20 +121,24 @@ def install_manifest_cache():
     generate_manifest_cache(config_dir)
 
 if __name__ == "__main__":
+    # 强制设置输出编码为 utf-8 (防止未来其他 print 报错)
+    sys.stdout.reconfigure(encoding='utf-8')
+    
     try:
         install_path.mkdir(parents=True, exist_ok=True)
 
         install_maa_runtimes(platform_tag)
-        check_python_environment() # 只要检查，不用强制复制了
+        check_python_environment()
         install_python_wheels()
         install_resource_and_agent()
         install_chores()
         install_manifest_cache()
 
-        print(f"✅ Install to {install_path} successfully.")
+        # 修改点：去掉了 Emoji
+        print(f"[SUCCESS] Install to {install_path} successfully.")
         
     except Exception as e:
-        print(f"❌ Error during installation: {e}")
+        print(f"[ERROR] Error during installation: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
