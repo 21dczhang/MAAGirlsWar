@@ -81,7 +81,7 @@ jobs:
         include:
           - arch: x86_64
             runner: windows-latest
-          # 暂时注释掉 arm64，除非你确定能用 windows-11-arm
+          # 如果不需要 arm64 可保持注释
           # - arch: aarch64
           #   runner: windows-11-arm
       fail-fast: false
@@ -149,10 +149,10 @@ jobs:
         shell: bash
         run: |
           PLATFORM_TAG="win-${{ steps.platform.outputs.tag }}"
-          # 这里只运行 install.py，它是生成 GUI/Full 版本的脚本
+          # 运行 install.py 生成主程序
           ./install/python/python.exe ./tools/ci/install.py ${{ needs.meta.outputs.tag }} $PLATFORM_TAG
           
-          # 仅当存在 registry 文件夹时才复制，防止报错
+          # 如果有 registry 文件夹才复制
           if [ -d "tools/registry" ]; then
             cp -rpvn tools/registry/. install/
           fi
@@ -198,7 +198,7 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
 
   release:
-    # 只有是 Release 标签时才运行发布
+    # 仅在打 Release Tag 时运行
     if: ${{ needs.meta.outputs.is_release == 'true' }}
     needs: [meta, windows, changelog]
     runs-on: ubuntu-latest
@@ -210,26 +210,17 @@ jobs:
       - name: Process and package artifacts
         run: |
           cd assets
-          # 遍历所有下载的构建产物
           for f in *; do
-            # 因为只有 Windows 版本了，直接压缩成 zip
             if [[ $f == *"win"* ]]; then
+              # 进入文件夹并打包为 zip
               (cd "$f" && zip -r "../$f.zip" .)
             fi
           done
 
       - uses: softprops/action-gh-release@v2.2.2
         with:
-          files: assets/*
+          files: assets/*.zip
           tag_name: ${{ needs.meta.outputs.tag }}
           body: ${{ needs.changelog.outputs.release_body }}
           draft: false
           prerelease: ${{ needs.meta.outputs.is_prerelease == 'true' }}
-
-      - name: Trigger MirrorChyanUploading
-        shell: bash
-        run: |
-          gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan.yml -f tag=${{ needs.meta.outputs.tag }}
-          gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan_release_note.yml -f tag=${{ needs.meta.outputs.tag }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
