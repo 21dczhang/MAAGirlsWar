@@ -164,7 +164,9 @@ def install_python_env():
     subprocess.check_call([sys.executable, "-m", "venv", str(venv_dir)])
 
     # 找 venv 内的 python / pip
-    if os_name == "win":
+    # 注意：这里用的是构建机（CI Runner）的路径规则，不是目标 os
+    # CI 统一跑在 Linux，所以始终用 bin/python3
+    if sys.platform.startswith("win"):
         venv_python = venv_dir / "Scripts" / "python.exe"
     else:
         venv_python = venv_dir / "bin" / "python3"

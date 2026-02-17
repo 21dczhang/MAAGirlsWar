@@ -3,6 +3,7 @@
 # Set variables
 $DownloadPath = "$env:TEMP\MaaLatest.zip"
 $ExtractPath = "C:\Users\Aurora\Desktop"
+$TargetFolderName = "MaaGirlsWar"
 $RepoUrl = "https://api.github.com/repos/21dczhang/MAAGirlsWar/releases/latest"
 
 Write-Host "Getting latest MAAGirlsWar release info..."
@@ -48,17 +49,41 @@ try {
         New-Item -ItemType Directory -Path $ExtractPath -Force
     }
     
-    # Create destination folder name without extension
-    $DestinationPath = Join-Path $ExtractPath ([System.IO.Path]::GetFileNameWithoutExtension($FileName))
+    # Define target destination path
+    $DestinationPath = Join-Path $ExtractPath $TargetFolderName
     
-    # Ensure destination directory doesn't already exist to prevent conflicts
+    # Remove existing MaaGirlsWar folder if it exists
     if (Test-Path $DestinationPath) {
+        Write-Host "Removing existing $TargetFolderName folder..."
         Remove-Item -Path $DestinationPath -Recurse -Force
     }
     
-    # Extract file using .NET compression methods
+    # Create temporary extraction directory
+    $TempExtractPath = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Path $TempExtractPath -Force
+    
+    # Extract file using .NET compression methods to temporary location
     Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($DownloadPath, $DestinationPath)
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($DownloadPath, $TempExtractPath)
+    
+    # Find the actual extracted content (there might be a subfolder inside the zip)
+    $ExtractedItems = Get-ChildItem -Path $TempExtractPath
+    if ($ExtractedItems.Count -eq 1 -and $ExtractedItems[0].PSIsContainer) {
+        # If there's only one folder in the extracted content, use that folder's contents
+        $ActualContentPath = $ExtractedItems[0].FullName
+    }
+    else {
+        # Otherwise, use the entire temp extraction directory
+        $ActualContentPath = $TempExtractPath
+    }
+    
+    # Move the content to the final destination with the fixed name
+    Move-Item -Path $ActualContentPath -Destination $DestinationPath -Force
+    
+    # Clean up temporary extraction directory
+    if (Test-Path $TempExtractPath) {
+        Remove-Item -Path $TempExtractPath -Recurse -Force
+    }
     
     Write-Host "Extraction completed, extracted to: $DestinationPath"
     
@@ -71,5 +96,11 @@ catch {
     Write-Error "Operation failed: $($_.Exception.Message)"
     if (Test-Path $DownloadPath) {
         Remove-Item $DownloadPath -ErrorAction SilentlyContinue
+    }
+    
+    # Clean up temporary extraction directory if it exists
+    $TempExtractPath = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+    if (Test-Path $TempExtractPath) {
+        Remove-Item -Path $TempExtractPath -ErrorAction SilentlyContinue
     }
 }
