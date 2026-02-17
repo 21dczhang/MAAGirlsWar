@@ -1,9 +1,12 @@
 name: Build MaaGirlsWar
 
+permissions:
+  contents: write  # Critical: Required to create releases
+
 on:
   push:
-    tags: ["v*"]  # 当你打标签如 v1.0.0 时触发打包
-  workflow_dispatch: # 也可以手动触发
+    tags: ["v*"]
+  workflow_dispatch:
 
 jobs:
   build-windows:
@@ -11,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      # 1. 下载 MaaFramework (注意版本)
+      # 1. Download MaaFramework
       - name: Download MaaFramework
         uses: robinraju/release-downloader@v1
         with:
@@ -21,22 +24,31 @@ jobs:
           out-file-path: "temp"
           extract: true
 
-      # 2. 准备 Python 和 Pip
+      # 2. Setup Python
       - name: Setup Embed Python
         run: python tools/ci/setup_embed_python.py
 
-      # 3. 下载并安装依赖到嵌入式环境
+      # 3. Install Dependencies
       - name: Install Dependencies
         run: |
           ./install/python/python.exe -m pip install -r requirements.txt --target ./install/python/Lib/site-packages
 
-      # 4. 组装
+      # 4. Bundle Project
       - name: Bundle
         run: python tools/ci/install.py ${{ github.ref_name }} win-x64
 
-      # 5. 上传最终结果
-      - name: Upload
-        uses: actions/upload-artifact@v4
+      # 5. Zip the output (Required for Release)
+      - name: Archive Release
+        run: |
+          Compress-Archive -Path install/* -DestinationPath MaaGirlsWar-win-x64.zip
+
+      # 6. Create GitHub Release
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: MaaGirlsWar-Windows
-          path: install/
+          files: MaaGirlsWar-win-x64.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
