@@ -5,13 +5,12 @@
     // 示例：https://github.com/MaaXYZ/MaaFramework/blob/main/sample/interface.json
     "interface_version": 2,
     "name": "MaaXXX",
-    "description": "这是一个使用 MaaFramework 创建的新项目。",
-    "contact": "QQ群: 123456789",
+    "description": "少女战争 MAA Girls War!",
     "license": "MIT",
-    "welcome": "首次使用！欢迎使用 MAA!",
     // 填写项目地址和版本号可实现自动更新功能
-    "github": "https://github.com/MaaXYZ/MaaPracticeBoilerplate",
-    "version": "1.0.0",
+    "github": "https://github.com/21dczhang/MAAGirlsWar",
+    // "version": "0.0.1",
+    "version": "DEBUG",
     // Mirror酱为第三方分发服务，新项目默认关闭
     // 若有需要请联系 Mirror酱 开通，直接自行开启是无法使用的
     // "mirrorchyan_rid": "MaaXXX",
@@ -38,72 +37,65 @@
     ],
     "resource": [
         {
-            "name": "官服",
+            "name": "台服",
             "path": [
                 "./resource"
             ]
         },
-        {
-            "name": "B 服",
-            "path": [
-                "./resource",
-                "./resource_bilibili"
-            ]
-        }
+        // {
+        //     "name": "B 服",
+        //     "path": [
+        //         "./resource",
+        //         "./resource_bilibili"
+        //     ]
+        // }
     ],
-    // 可选的 agent 示例
-    // "agent": {
-    //     "child_exec": "python",
-    //     "child_args": [
-    //         "./agent/main.py"
-    //     ]
-    // },
+    //可选的 agent 示例
+    "agent": {
+        "child_exec": "python",
+        "child_args": [
+            "./../agent/main.py"
+        ]
+    },
     "task": [
         {
-            "name": "普通任务",
-            "entry": "MyTask1"
+            "name": "启动游戏",
+            "entry": "StartGame_Start",
+            "default_check": true
         },
         {
-            "name": "选项任务",
-            "entry": "MyTask2",
-            "option": [
-                "任务选项1"
-            ]
+            "name": "宁宁助手",
+            "entry": "NingNing_Start",
+            "default_check": true
         },
         {
-            "name": "参数任务",
-            "entry": "MyTask3",
-            "option": [
-                "任务选项1"
-            ],
-            "pipeline_override": {}
+            "name": "领取VIP经验",
+            "entry": "VIP_EXP_Start",
+            "default_check": true
         },
         {
-            "name": "带Custom的任务",
-            "entry": "MyTask4"
+            "name": "领取免费券 - 角色券 & 花嫁券",
+            "entry": "Daily_UP50_Start",
+            "default_check": true
+        },
+        {
+            "name": "冒险 - 日常完成",
+            "entry": "MaoXian_Start",
+            "default_check": true
+        },
+        {
+            "name": "领取日常/周常奖励",
+            "entry": "Daily_Task_Start",
+            "default_check": true
+        },
+        {
+            "name": "测试任务",
+            "entry": "开始遍历"
+        },
+        {
+            "name": "测试任务2",
+            "entry": "Daily_Task_Daily_Task_Start_RiHuoYueJiangLi_Start"
         }
     ],
-    "option": {
-        "任务选项1": {
-            "type": "select",
-            "cases": [
-                {
-                    "name": "文本1",
-                    "pipeline_override": {
-                        "OcrTask": {
-                            "text": "文本1"
-                        }
-                    }
-                },
-                {
-                    "name": "文本2",
-                    "pipeline_override": {
-                        "OcrTask": {
-                            "text": "文本2"
-                        }
-                    }
-                }
-            ]
-        }
-    }
+    "option": {}
 }

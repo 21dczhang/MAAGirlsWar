@@ -1,0 +1,85 @@
+{
+    "MaoXian_MaoXian_Start_DiXiaCheng": {
+        "recognition": "OCR",
+        "expected": [
+            "地下城探索"
+        ],
+        "next": [
+            "[JumpBack]MaoXian_MaoXian_Start_DiXiaCheng_GuaJiJiangLi",
+            "[JumpBack]MaoXian_MaoXian_Start_DiXiaCheng_Fight_Once",
+            "MaoXian_MaoXian_Start_DiXiaCheng_Comeback_MaoXian_HomePage"
+        ],
+        "action": "Click",
+        "post_delay": 6000,
+        "max_hit": 1,
+        "focus": "开始地下城 子任务"
+    },
+    "MaoXian_MaoXian_Start_DiXiaCheng_GuaJiJiangLi": {
+        "recognition": "OCR",
+        "expected": [
+            "取"
+        ],
+        "action": "Click",
+        "next": [
+            "MaoXian_Call_Backup_Button_Direct"
+        ],
+        "post_delay": 3000,
+        "max_hit": 1,
+        "focus": "领取挂机奖励"
+    },
+    "MaoXian_MaoXian_Start_DiXiaCheng_Fight_Once": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "冒险-地下城-挑战.png"
+        ],
+        "action": "Click",
+        "max_hit": 1,
+        "next": [
+            "MaoXian_MaoXian_Start_DiXiaCheng_Fight_Once_Fight_And_Skip"
+        ],
+        "focus": "战斗一次"
+    },
+    "MaoXian_MaoXian_Start_DiXiaCheng_Fight_Once_Fight_And_Skip": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "战斗界面-挑战.png",
+            "战斗界面-战.png",
+            "战斗界面 - 跳过2.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "next": [
+            "[JumpBack]MaoXian_MaoXian_Start_DiXiaCheng_Fight_Once_Fight_And_Skip",
+            "MaoXian_MaoXian_Start_DiXiaCheng_Fight_Once_Complete"
+        ],
+        "timeout": 5000
+    },
+    "MaoXian_MaoXian_Start_DiXiaCheng_Fight_Once_Complete": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "地下城 - 继续探索.png"
+        ],
+        "action": "Click",
+        "post_delay": 6000,
+        "next": [
+            "MaoXian_Call_Backup_Button_Direct"
+        ],
+        "focus": "地下城 - 战斗结束"
+    },
+    "MaoXian_MaoXian_Start_DiXiaCheng_Comeback_MaoXian_HomePage": {
+        "next": [
+            "MaoXian_MaoXian_Start_DiXiaCheng_Is_MaoXian_HomePage",
+            "[JumpBack]MaoXian_Call_Backup_Button"
+        ],
+        "focus": "返回冒险主界面"
+    },
+    "MaoXian_MaoXian_Start_DiXiaCheng_Is_MaoXian_HomePage": {
+        "recognition": "OCR",
+        "expected": [
+            "險"
+        ],
+        "focus": "已经回到冒险主界面"
+    },
+}

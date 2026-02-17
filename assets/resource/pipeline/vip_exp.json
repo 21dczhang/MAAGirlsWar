@@ -1,0 +1,182 @@
+{
+    "VIP_EXP_Start": {
+        "next": [
+            "VIP_EXP_Is_HomePage",
+            "[JumpBack]VIP_EXP_Call_Backup_Button"
+        ],
+        "focus": "领取vip经验！"
+    },
+    "VIP_EXP_Call_Backup_Button": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "返回键.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "focus": "触发返回",
+        "post_delay": 1500
+    },
+    "VIP_EXP_Call_Backup_Button_Direct": {
+        "recognition": "OCR",
+        "expected": [
+            "繼續"
+        ],
+        "action": "Click",
+        "focus": "点击返回",
+        "post_delay": 1500
+    },
+    "VIP_EXP_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "邮箱.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "识别到邮箱，3s后再次识别",
+        "post_delay": 3000,
+        "max_hit": 2,
+        "next": [
+            "VIP_EXP_Is_HomePage2",
+            "[JumpBack]VIP_EXP_Call_Backup_Button",
+            "[JumpBack]VIP_EXP_Call_Backup_Button_Direct"
+        ]
+    },
+    "VIP_EXP_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "邮箱.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "再次确认：邮箱，已回到主界面，开始领取vip经验",
+        "next": [
+            "VIP_EXP_Find_VIP_EXP",
+            "[JumpBack]VIP_EXP_Call_Backup_Button",
+            "[JumpBack]VIP_EXP_Call_Backup_Button_Direct"
+        ]
+    },
+    "VIP_EXP_Find_VIP_EXP": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "vip图标.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "next": [
+            "VIP_EXP_VIP_EXP_Start",
+            "VIP_EXP_Find_VIP_EXP",
+            "[JumpBack]VIP_EXP_Call_Backup_Button"
+        ],
+        "focus": "点击VIP图标"
+    },
+    "VIP_EXP_VIP_EXP_Start": {
+        "recognition": "OCR",
+        "expected": [
+            "權"
+        ],
+        "next": [
+            "[JumpBack]VIP_EXP_VIP_EXP_Start_Exp_Claim",
+            "[JumpBack]VIP_EXP_VIP_EXP_Start_MeiRi",
+            //后续等级够了，在这里写一键执行的任务，上面三个可以删除
+            "VIP_EXP_VIP_EXP_ComeBack_Home"
+        ],
+        "timeout": 8000,
+        "focus": "已经进入VIP界面"
+    },
+    "VIP_EXP_VIP_EXP_Start_Exp_Claim": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "vip经验礼盒图标.png"
+        ],
+        "action": "Click",
+        "next": [
+            "VIP_EXP_VIP_EXP_Start_Exp_Claim_Complete",
+            "VIP_EXP_VIP_EXP_Start_Exp_Claim"
+        ],
+        "max_hit": 1,
+        "timeout": 3000,
+        "focus": "VIP - 领取VIP经验"
+    },
+    "VIP_EXP_VIP_EXP_Start_Exp_Claim_Complete": {
+        "recognition": "OCR",
+        "expected": [
+            "繼續"
+        ],
+        "action": "Click",
+        "next": [
+            "VIP_EXP_VIP_EXP_Start_Exp_Claim_Complete",
+        ],
+        "timeout": 3000,
+        "focus": "vip经验领取完毕"
+    },
+    "VIP_EXP_VIP_EXP_Start_MeiRi": {
+        "recognition": "OCR",
+        "expected": [
+            "領取"
+        ],
+        "roi": [
+            935,
+            508,
+            256,
+            198
+        ],
+        "action": "Click",
+        "next": [
+            "VIP_EXP_VIP_EXP_Start_MeiRi_Complete",
+            "VIP_EXP_VIP_EXP_Start_MeiRi"
+        ],
+        "max_hit": 1,
+        "focus": "vip - 每日特典礼盒"
+    },
+    "VIP_EXP_VIP_EXP_Start_MeiRi_Complete": {
+        "recognition": "OCR",
+        "expected": [
+            "繼續"
+        ],
+        "action": "Click",
+        "next": [
+            "VIP_EXP_VIP_EXP_Start_MeiRi_Complete",
+        ],
+        "timeout": 3000,
+        "focus": "vip经验领取完毕"
+    },
+    "VIP_EXP_VIP_EXP_ComeBack_Home": {
+        "next": [
+            "[JumpBack]VIP_EXP_Call_Backup_Button",
+            "[JumpBack]VIP_EXP_Call_Backup_Button_Direct",
+            "VIP_EXP_VIP_EXP_ComeBack_Home_Is_HomePage"
+        ],
+        "focus": "执行完毕，返回主界面"
+    },
+    "VIP_EXP_VIP_EXP_ComeBack_Home_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "邮箱.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "next": [
+            "VIP_EXP_VIP_EXP_ComeBack_Home_Is_HomePage2",
+            "[JumpBack]VIP_EXP_Call_Backup_Button",
+        ],
+        "post_delay": 1500,
+        "focus": "执行完毕，返回主界面1"
+    },
+    "VIP_EXP_VIP_EXP_ComeBack_Home_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "邮箱.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "执行完毕，第二次确认，已经在主界面"
+    }
+}

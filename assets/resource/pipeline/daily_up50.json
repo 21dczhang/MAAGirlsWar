@@ -1,0 +1,324 @@
+{
+    "Daily_UP50_Start": {
+        "next": [
+            "Daily_UP50_Is_HomePage",
+            "[JumpBack]Daily_UP50_Call_Backup_Button",
+            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
+        ],
+        "focus": "领取up 50%免费奖励，如花嫁、UR闪等礼盒"
+    },
+    "Daily_UP50_Call_Backup_Button": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "返回键.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "focus": "触发返回",
+        "post_delay": 1500
+    },
+    "Daily_UP50_Call_Backup_Button_Direct": {
+        "target": [
+            411,
+            702,
+            10,
+            9
+        ],
+        "action": "Click",
+        "focus": "点击返回",
+        "post_delay": 1500
+    },
+    "Daily_UP50_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "识别到邮箱，3s后再次识别",
+        "post_delay": 3000,
+        "max_hit": 2,
+        "next": [
+            "Daily_UP50_Is_HomePage2",
+            "[JumpBack]Daily_UP50_Call_Backup_Button",
+            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
+        ]
+    },
+    "Daily_UP50_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "再次确认：邮箱，已回到主界面，开始领取vip经验",
+        "next": [
+            "Daily_UP50_Find_Daily_UP50",
+            "[JumpBack]Daily_UP50_Call_Backup_Button",
+            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
+            //这里开始主任务，已经回到主界面了
+        ]
+    },
+    "Daily_UP50_Find_Daily_UP50": {
+        // "recognition": "DirectHit",
+        // "action": "Click",
+        // "target": [
+        //     100,
+        //     196,
+        //     101,
+        //     46
+        // ],
+        "next": [
+            "Daily_UP50_Daily_UP50_Start",
+            "[JumpBack]Daily_UP50_Call_Backup_Button",
+            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
+        ],
+        // "focus": "点击活动栏"
+    },
+    "Daily_UP50_Daily_UP50_Start": {
+        // "next": [
+        //     "[JumpBack]Daily_UP50_Daily_UP50_Start_Clip_Up",
+        //     "[JumpBack]Daily_UP50_Daily_UP50_Selet_Up50_Start",
+        //     //"[JumpBack]Daily_UP50_Daily_UP50_Start_Clip_Up_One",
+        //     //后续等级够了，在这里写一键执行的任务，上面三个可以删除
+        //     "Daily_UP50_Daily_UP50_ComeBack_Home"
+        // ],
+        "next": [
+            "[JumpBack]Daily_UP50_Daily_UP50_Selet_Up50_Start"
+        ],
+        "focus": "监控活动界面..."
+    },
+    "Daily_UP50_Daily_UP50_Selet_Up50_Start": {
+        "next": [
+            "Daily_UP50_Daily_UP50_Click_Up50",
+            "Daily_UP50_Daily_UP50_Click_Up50_Inverse",
+        ],
+        "max_hit": 50,
+        "focus": "开始寻找 up50% 活动"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "50%2.png",
+            "小窗口-50%箭头.png"
+        ],
+        "threshold": [
+            0.6
+        ],
+        "roi": [
+            22,
+            166,
+            230,
+            101
+        ],
+        "action": "Click",
+        "next": [
+            "Daily_UP50_Daily_UP50_Click_Up50_Is_Claimed",
+            "Daily_UP50_Daily_UP50_Click_Up50_Is_Claimed_Inverst"
+        ],
+        "focus": "识别到 up 50% ..."
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Inverse": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "50%2.png"
+        ],
+        "threshold": [
+            0.5
+        ],
+        "roi": [
+            22,
+            166,
+            230,
+            101
+        ],
+        "inverse": true,
+        "action": "Swipe",
+        "begin": [
+            212,
+            212
+        ],
+        "end": [
+            45,
+            212
+        ],
+        "focus": "未识别到 up 50% ，滑动..."
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Is_Claimed": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "免费券红点.png"
+        ],
+        "threshold": [
+            0.5
+        ],
+        "roi": [
+            1164,
+            64,
+            31,
+            171
+        ],
+        "action": "Click",
+        "next": [
+            "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_MianFei",
+            "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_QueDing",
+            "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JueSe",
+            "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JueSe2",
+            "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_HuaJia",
+            "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JieXinJi",
+        ],
+        "post_delay": 5000,
+        "timeout": 20000,
+        "focus": "识别到未领取的活动"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_MianFei": {
+        "recognition": "OCR",
+        "expected": [
+            "免費",
+            "已領取"
+        ],
+        "action": "Click",
+        "next": [
+            "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage2",
+            "[JumpBack]Daily_UP50_Call_Backup_Button",
+            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
+        ]
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_QueDing": {
+        "recognition": "OCR",
+        "expected": [
+            "^確定$",
+            "^確認$"
+        ],
+        "action": "Click",
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_50": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "50%up.png",
+            "up50箭头1.png",
+            "up50箭头2.png",
+            "up50_u.png"
+        ],
+        "order_by": "Horizontal",
+        "threshold": [
+            0.8
+        ],
+        "index": -1,
+        "action": "Click"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JueSe": {
+        "recognition": "OCR",
+        "expected": [
+            "特惠",
+            "禮包"
+        ],
+        "action": "Click",
+        "next": [],
+        "focus": "检测到特惠礼包 - 属于 角色券"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JueSe2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "回归特惠.png"
+        ],
+        "action": "Click",
+        "next": [],
+        "focus": "检测到回归特惠 - 属于 角色券"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_HuaJia": {
+        "recognition": "OCR",
+        "expected": [
+            "花嫁召喚"
+        ],
+        "action": "Click",
+        "next": [
+            "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_HuaJia_MianFeiLiBao",
+            "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_HuaJia_MianFeiLiBao2"
+        ],
+        "focus": "检测到花嫁召唤 - 属于 花嫁券"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JieXinJi": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "结心祭-免费礼包.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "focus": "结心祭礼包"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_HuaJia_MianFeiLiBao": {
+        "recognition": "OCR",
+        "expected": [
+            "禮包"
+        ],
+        "action": "Click",
+        "next": [],
+        "focus": "进入 花嫁免费礼包界面"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_HuaJia_MianFeiLiBao2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "up50箭头1.png",
+            "up50箭头2.png"
+        ],
+        "threshold": [
+            0.6,
+            0.6
+        ],
+        "action": "Click"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Is_Claimed_Inverst": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "免费券红点.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "inverse": true,
+        "next": [
+            "Daily_UP50_Call_Backup_Button_Direct"
+        ],
+        "focus": "这个活动已经领取过，跳过"
+    },
+    "Daily_UP50_Daily_UP50_ComeBack_Home": {
+        "next": [
+            "[JumpBack]Daily_UP50_Call_Backup_Button",
+            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct",
+            "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage"
+        ],
+        "focus": "执行完毕，返回主界面"
+    },
+    "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "next": [
+            "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage2",
+            "[JumpBack]Daily_UP50_Call_Backup_Button",
+        ],
+        "post_delay": 1500,
+        "focus": "执行完毕，返回主界面1"
+    },
+    "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "执行完毕，第二次确认，已经在主界面"
+    }
+}

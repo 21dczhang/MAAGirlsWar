@@ -1,0 +1,325 @@
+// {
+//     "Daily_UP50_Start": {
+//         "next": [
+//             "Daily_UP50_Is_HomePage",
+//             "[JumpBack]Daily_UP50_Call_Backup_Button"
+//         ],
+//         "focus": "领取up 50%免费奖励，如花嫁、UR闪等礼盒"
+//     },
+//     "Daily_UP50_Call_Backup_Button": {
+//         "recognition": "TemplateMatch",
+//         "template": [
+//             "返回键.png"
+//         ],
+//         "threshold": [
+//             0.9
+//         ],
+//         "action": "Click",
+//         "focus": "触发返回",
+//         "post_delay": 1500
+//     },
+//     "Daily_UP50_Call_Backup_Button_Direct": {
+//         "recognition": "OCR",
+//         "expected": [
+//             "繼續"
+//         ],
+//         "action": "Click",
+//         "focus": "点击返回",
+//         "post_delay": 1500
+//     },
+//     "Daily_UP50_Is_HomePage": {
+//         "recognition": "TemplateMatch",
+//         "template": [
+//             "邮箱.png"
+//         ],
+//         "threshold": [
+//             0.9
+//         ],
+//         "focus": "识别到邮箱，3s后再次识别",
+//         "post_delay": 3000,
+//         "max_hit": 2,
+//         "next": [
+//             "Daily_UP50_Is_HomePage2",
+//             "[JumpBack]Daily_UP50_Call_Backup_Button",
+//             "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
+//         ]
+//     },
+//     "Daily_UP50_Is_HomePage2": {
+//         "recognition": "TemplateMatch",
+//         "template": [
+//             "邮箱.png"
+//         ],
+//         "threshold": [
+//             0.9
+//         ],
+//         "focus": "再次确认：邮箱，已回到主界面，开始领取vip经验",
+//         "next": [
+//             "Daily_UP50_Find_Daily_UP50",
+//             "[JumpBack]Daily_UP50_Call_Backup_Button",
+//             "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
+//             //这里开始主任务，已经回到主界面了
+//         ]
+//     },
+//     "Daily_UP50_Find_Daily_UP50": {
+//         "recognition": "DirectHit",
+//         "action": "Click",
+//         "target": [
+//             100,
+//             196,
+//             101,
+//             46
+//         ],
+//         "next": [
+//             "Daily_UP50_Daily_UP50_Start",
+//             "[JumpBack]Daily_UP50_Call_Backup_Button",
+//             "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
+//         ],
+//         "focus": "点击活动栏"
+//     },
+//     "Daily_UP50_Daily_UP50_Start": {
+//         "next": [
+//             "[JumpBack]Daily_UP50_Daily_UP50_Start_Clip_Up",
+//             "[JumpBack]Daily_UP50_Daily_UP50_Selet_Up50_Start",
+//             //"[JumpBack]Daily_UP50_Daily_UP50_Start_Clip_Up_One",
+//             //后续等级够了，在这里写一键执行的任务，上面三个可以删除
+//             "Daily_UP50_Daily_UP50_ComeBack_Home"
+//         ],
+//         "focus": "已经进入活动界面"
+//     },
+//     "Daily_UP50_Daily_UP50_Start_Clip_Up": {
+//         "recognition": "DirectHit",
+//         "max_hit": 2,
+//         "action": "Swipe",
+//         "begin": [
+//             1195,
+//             77
+//         ],
+//         "end": [
+//             1195,
+//             660
+//         ],
+//         "post_delay": 1000,
+//         "focus": "滑动进度条，使其在最上面"
+//     },
+//     "Daily_UP50_Daily_UP50_Selet_Up50_Start": {
+//         "next": [
+//             "Daily_UP50_Daily_UP50_Click_Up50",
+//             "Daily_UP50_Daily_UP50_Click_Up50_Inverse"
+//         ],
+//         "max_hit": 20,
+//         "focus": "开始寻找 up50% 活动"
+//     },
+//     "Daily_UP50_Daily_UP50_Click_Up50": {
+//         "recognition": "TemplateMatch",
+//         "template": [
+//             "50%up.png"
+//         ],
+//         "threshold": [
+//             0.9
+//         ],
+//         "roi": [
+//             329,
+//             71,
+//             864,
+//             159
+//         ],
+//         "action": "Click",
+//         "next": [
+//             "Daily_UP50_Daily_UP50_Click_Up50_Goto_MianFeiLiBao_Start"
+//         ],
+//         "focus": "识别到 up 50% ..."
+//     },
+//     "Daily_UP50_Daily_UP50_Click_Up50_Goto_MianFeiLiBao_Start": {
+//         "next": [
+//             "Daily_UP50_Daily_UP50_Click_Up50_Goto_MianFeiLiBao_Start_50Up",
+//             "Daily_UP50_Daily_UP50_Click_Up50_Goto_MianFeiLiBao_Start_MianFei"
+//         ],
+//         "focus": "寻找本活动的免费礼包"
+//     },
+//     "Daily_UP50_Daily_UP50_Click_Up50_Goto_MianFeiLiBao_Start_50Up": {
+//         "recognition": "TemplateMatch",
+//         "template": [
+//             "50%up.png"
+//         ],
+//         "threshold": [
+//             0.9
+//         ],
+//         "roi": [
+//             329,
+//             71,
+//             864,
+//             159
+//         ],
+//         "action": "Click",
+//         "focus": "本活动寻找到 up 50% 图标..."
+//     },
+//     "Daily_UP50_Daily_UP50_Click_Up50_Goto_MianFeiLiBao_Start_MianFei": {},
+//     "Daily_UP50_Daily_UP50_Click_Up50_Inverse": {
+//         "recognition": "OCR",
+//         "expected": [
+//             "50%"
+//         ],
+//         "roi": [
+//             329,
+//             71,
+//             864,
+//             159
+//         ],
+//         "inverse": true,
+//         "next": [
+//             "Daily_UP50_Daily_UP50_Start_Clip_Up_One"
+//         ],
+//         "focus": "没有 up 50%活动,进入下个活动..."
+//     },
+//     "Daily_UP50_Daily_UP50_Start_Clip_Up_One": {
+//         "recognition": "DirectHit",
+//         "action": "Swipe",
+//         "begin": [
+//             1195,
+//             223
+//         ],
+//         "end": [
+//             [
+//                 1195,
+//                 208
+//             ],
+//             [
+//                 1195,
+//                 193
+//             ],
+//             [
+//                 1195,
+//                 178
+//             ],
+//             [
+//                 1195,
+//                 163
+//             ],
+//             [
+//                 1195,
+//                 148
+//             ],
+//             [
+//                 1195,
+//                 133
+//             ],
+//             [
+//                 1195,
+//                 118
+//             ],
+//             [
+//                 1195,
+//                 103
+//             ],
+//             [
+//                 1195,
+//                 88
+//             ],
+//             [
+//                 1195,
+//                 73
+//             ],
+//             [
+//                 1195,
+//                 58
+//             ],
+//             [
+//                 1195,
+//                 48
+//             ]
+//         ],
+//         "focus": "划动下个活动...",
+//         "post_delay": 1000,
+//     },
+//     "Daily_UP50_Daily_UP50_Start_Exp_Claim": {
+//         "recognition": "TemplateMatch",
+//         "template": [
+//             "vip经验礼盒图标.png"
+//         ],
+//         "action": "Click",
+//         "next": [
+//             "Daily_UP50_Daily_UP50_Start_Exp_Claim_Complete",
+//             "Daily_UP50_Daily_UP50_Start_Exp_Claim"
+//         ],
+//         "max_hit": 1,
+//         "timeout": 3000,
+//         "focus": "VIP - 领取VIP经验"
+//     },
+//     "Daily_UP50_Daily_UP50_Start_Exp_Claim_Complete": {
+//         "recognition": "OCR",
+//         "expected": [
+//             "繼續"
+//         ],
+//         "action": "Click",
+//         "next": [
+//             "Daily_UP50_Daily_UP50_Start_Exp_Claim_Complete",
+//         ],
+//         "timeout": 3000,
+//         "focus": "vip经验领取完毕"
+//     },
+//     "Daily_UP50_Daily_UP50_Start_MeiRi": {
+//         "recognition": "OCR",
+//         "expected": [
+//             "領取"
+//         ],
+//         "roi": [
+//             935,
+//             508,
+//             256,
+//             198
+//         ],
+//         "action": "Click",
+//         "next": [
+//             "Daily_UP50_Daily_UP50_Start_MeiRi_Complete",
+//             "Daily_UP50_Daily_UP50_Start_MeiRi"
+//         ],
+//         "max_hit": 1,
+//         "focus": "vip - 每日特典礼盒"
+//     },
+//     "Daily_UP50_Daily_UP50_Start_MeiRi_Complete": {
+//         "recognition": "OCR",
+//         "expected": [
+//             "繼續"
+//         ],
+//         "action": "Click",
+//         "next": [
+//             "Daily_UP50_Daily_UP50_Start_MeiRi_Complete",
+//         ],
+//         "timeout": 3000,
+//         "focus": "vip经验领取完毕"
+//     },
+//     "Daily_UP50_Daily_UP50_ComeBack_Home": {
+//         "next": [
+//             "[JumpBack]Daily_UP50_Call_Backup_Button",
+//             "[JumpBack]Daily_UP50_Call_Backup_Button_Direct",
+//             "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage"
+//         ],
+//         "focus": "执行完毕，返回主界面"
+//     },
+//     "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage": {
+//         "recognition": "TemplateMatch",
+//         "template": [
+//             "邮箱.png"
+//         ],
+//         "threshold": [
+//             0.9
+//         ],
+//         "next": [
+//             "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage2",
+//             "[JumpBack]Daily_UP50_Call_Backup_Button",
+//         ],
+//         "post_delay": 1500,
+//         "focus": "执行完毕，返回主界面1"
+//     },
+//     "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage2": {
+//         "recognition": "TemplateMatch",
+//         "template": [
+//             "邮箱.png"
+//         ],
+//         "threshold": [
+//             0.9
+//         ],
+//         "focus": "执行完毕，第二次确认，已经在主界面"
+//     }
+// }
+{}

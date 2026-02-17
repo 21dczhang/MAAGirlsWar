@@ -1,0 +1,53 @@
+{
+    "开始遍历": {
+        "recognition": "DirectHit",
+        "action": "Custom",
+        "custom_action": "TraverseAndExecute",
+        "custom_action_param": {
+            "template": "免费券红点.png",
+            "threshold": 0.7,
+            "roi": [
+                0,
+                200,
+                1080,
+                700
+            ],
+            "action_sequence": [
+                "TaskA",
+                "TaskB"
+            ],
+            "after_all": "TaskC",
+            "stop_condition": {
+                "type": "ocr",
+                "target": "料理屋",
+                "roi": [
+                    0,
+                    0,
+                    500,
+                    100
+                ]
+            }
+        }
+    },
+    "TaskA": {
+        "recognition": "OCR",
+        "expected": [
+            "1"
+        ],
+        "action": "Click"
+    },
+    "TaskB": {
+        "recognition": "OCR",
+        "expected": [
+            "1"
+        ],
+        "action": "Click"
+    },
+    "TaskC": {
+        "recognition": "OCR",
+        "expected": [
+            "1"
+        ],
+        "action": "Click"
+    }
+}

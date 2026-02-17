@@ -1,0 +1,156 @@
+{
+    "MianFeiChouKa_Start": {
+        "next": [
+            "MianFeiChouKa_Is_HomePage",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct"
+        ],
+        "focus": "自动抽免费抽"
+    },
+    "MianFeiChouKa_Call_Backup_Button": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "返回键.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "focus": "触发返回",
+        "post_delay": 1500
+    },
+    "MianFeiChouKa_Call_Backup_Button_Direct": {
+        "target": [
+            411,
+            702,
+            10,
+            9
+        ],
+        "action": "Click",
+        "focus": "点击返回",
+        "post_delay": 1500
+    },
+    "MianFeiChouKa_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "识别到邮箱，3s后再次识别",
+        "post_delay": 3000,
+        "max_hit": 2,
+        "next": [
+            "MianFeiChouKa_Is_HomePage2",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct"
+        ]
+    },
+    "MianFeiChouKa_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "再次确认：邮箱，已回到主界面，开始领取vip经验",
+        "next": [
+            "MianFeiChouKa_Find_MianFeiChouKa",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct"
+            //这里开始主任务，已经回到主界面了
+        ]
+    },
+    "MianFeiChouKa_Find_MianFeiChouKa": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "招募.png"
+        ],
+        "action": "Click",
+        "threshold": [
+            0.9
+        ],
+        "next": [
+            "MianFeiChouKa_MianFeiChouKa_Start",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct"
+        ],
+        "focus": "点击招募"
+    },
+    "MianFeiChouKa_MianFeiChouKa_Start": {
+        "next": [],
+        "focus": "开始抽免费抽..."
+    },
+    "MianFeiChouKa_MianFeiChouKa_Swip_Once": {
+        // "action": "Swipe",
+        // "begin": [
+        //     127,
+        //     308
+        // ]
+    },
+    "MyTraverseNode": {
+        "recognition": "DirectHit",
+        "action": "Custom",
+        "custom_action": "TraverseAndExecute",
+        "custom_action_param": {
+            "template": "target.png",
+            "threshold": 0.8,
+            "roi": [
+                0,
+                200,
+                1080,
+                700
+            ],
+            "action_sequence": [
+                // "TaskA",
+                // "TaskB"
+            ],
+            // "after_all": "TaskC",
+            "stop_condition": {
+                "type": "ocr",
+                "target": "料理屋",
+                "roi": [
+                    0,
+                    0,
+                    500,
+                    100
+                ]
+            }
+        }
+    },
+    "MianFeiChouKa_MianFeiChouKa_ComeBack_Home": {
+        "next": [
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct",
+            "MianFeiChouKa_MianFeiChouKa_ComeBack_Home_Is_HomePage"
+        ],
+        "focus": "执行完毕，返回主界面"
+    },
+    "MianFeiChouKa_MianFeiChouKa_ComeBack_Home_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "next": [
+            "MianFeiChouKa_MianFeiChouKa_ComeBack_Home_Is_HomePage2",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button",
+        ],
+        "post_delay": 1500,
+        "focus": "执行完毕，返回主界面1"
+    },
+    "MianFeiChouKa_MianFeiChouKa_ComeBack_Home_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "执行完毕，第二次确认，已经在主界面"
+    }
+}

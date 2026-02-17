@@ -1,0 +1,89 @@
+{
+    "StartGame_Start": {
+        "action": "StartApp",
+        "package": "com.y2sgames.girlwarstw",
+        "next": [
+            "StartGame_Skip_Notice",
+            "StartGame_Click_Start"
+        ],
+        "timeout": 30000,
+        "focus": "启动游戏！"
+    },
+    "StartGame_Skip_Notice": {
+        "recognition": "OCR",
+        "expected": [
+            "面"
+        ],
+        "action": "Click",
+        "roi": [
+            105,
+            672,
+            1074,
+            47
+        ],
+        "next": [
+            "StartGame_Skip_Notice",
+            "StartGame_Click_Start"
+        ],
+        "focus": "跳过公告"
+    },
+    "StartGame_Click_Start": {
+        "recognition": "OCR",
+        "expected": [
+            "(?i)s"
+        ],
+        "action": "Click",
+        "next": [
+            "StartGame_Skip_Activity",
+            "StartGame_Is_HomePage"
+        ],
+        "timeout": 60000,
+        "focus": "点击start game"
+    },
+    "StartGame_Skip_Activity": {
+        "recognition": "OCR",
+        "expected": [
+            "確認",
+            "點擊"
+        ],
+        "action": "Click",
+        "target": [
+            486,
+            694,
+            13,
+            11
+        ],
+        "next": [
+            "StartGame_Is_HomePage",
+            "StartGame_Skip_Activity"
+        ],
+        "focus": "跳过活动提示"
+    },
+    "StartGame_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "邮箱.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "识别到邮箱，3s后再次识别",
+        "post_delay": 3000,
+        "max_hit": 2,
+        "next": [
+            "StartGame_Skip_Activity",
+            "StartGame_Is_HomePage2"
+        ]
+    },
+    "StartGame_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "邮箱.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "再次确认：邮箱，结束任务",
+        "next": []
+    },
+}
