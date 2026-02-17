@@ -1,213 +1,42 @@
-name: Build and Release
+name: Build MaaGirlsWar
 
 on:
   push:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+*"
-    branches:
-      - "**"
-    paths:
-      - ".github/workflows/install.yml"
-      - "assets/**"
-      - "**.py"
-  pull_request:
-    branches:
-      - "**"
-    paths:
-      - ".github/workflows/install.yml"
-      - "assets/**"
-      - "**.py"
-  workflow_dispatch:
-
-env:
-  MAA_FRAMEWORK_VERSION: "v5.6.0"
-  MFAA_VERSION: "v2.7.2"
-  MXU_VERSION: "v1.13.1"
-
-permissions:
-  contents: write
-  actions: write
+    tags: ["v*"]  # 当你打标签如 v1.0.0 时触发打包
+  workflow_dispatch: # 也可以手动触发
 
 jobs:
-  meta:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - id: set_tag
-        run: |
-          if [[ ${{ github.ref }} =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*)?$ ]]; then
-            is_release=true
-            tag=${GITHUB_REF#refs/tags/}
-          else
-            is_release=false
-            tag=$(curl -sX GET "https://api.github.com/repos/${{ github.repository }}/releases/latest" --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' | awk '/tag_name/{print $4}' FS='["]')
-            if [[ ! $tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
-              tag="v0.0.0"
-            fi
-            tag=$(date "+$tag-%y%m%d-$(git rev-parse --short HEAD)")
-          fi
-          if [ "$is_release" != "true" ] ; then
-            prefix=${tag%-*-*}
-            suffix=${tag#$prefix-}
-            tag="$prefix-ci.$suffix"
-          fi
-          is_prerelease=false
-          if [[ $tag =~ .*alpha.* || $tag =~ .*beta.* || $tag =~ .*rc.* || $tag =~ .*dev.* || $tag =~ .*-ci.* ]]; then
-            is_prerelease=true
-          fi
-          echo tag=$tag | tee -a $GITHUB_OUTPUT
-          echo is_release=$is_release | tee -a $GITHUB_OUTPUT
-          echo is_prerelease=$is_prerelease | tee -a $GITHUB_OUTPUT
-    outputs:
-      tag: ${{ steps.set_tag.outputs.tag }}
-      is_release: ${{ steps.set_tag.outputs.is_release }}
-      is_prerelease: ${{ steps.set_tag.outputs.is_prerelease }}
-
-  windows:
-    needs: meta
-    strategy:
-      matrix:
-        include:
-          - arch: x86_64
-            runner: windows-latest
-    runs-on: ${{ matrix.runner }}
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Set platform variables
-        id: platform
-        shell: bash
-        run: |
-          echo "tag=x64" >> $GITHUB_OUTPUT
-
+      
+      # 1. 下载 MaaFramework (注意版本)
       - name: Download MaaFramework
         uses: robinraju/release-downloader@v1
         with:
           repository: MaaXYZ/MaaFramework
-          fileName: "MAA-win-${{ matrix.arch }}*"
-          tag: ${{ env.MAA_FRAMEWORK_VERSION }}
-          out-file-path: "deps"
+          fileName: "MAA-win-x86_64-v5.6.0.zip" 
+          tag: "v5.6.0"
+          out-file-path: "temp"
           extract: true
 
-      - name: Download MFAAvalonia
-        id: download_mfa
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: SweetSmellFox/MFAAvalonia
-          fileName: "MFAAvalonia-*-win-${{ steps.platform.outputs.tag }}*"
-          tag: ${{ env.MFAA_VERSION }}
-          out-file-path: "MFA"
-          extract: true
-
-      - name: Clean up MFAAvalonia archive
-        shell: bash
-        run: |
-          ARCHIVE_FILE_PATH="${{ fromJson(steps.download_mfa.outputs.downloaded_files)[0] }}"
-          rm -f "${ARCHIVE_FILE_PATH}"
-
-      # ----------------------------------------------------------------
-      # 关键步骤：设置 Python
-      # ----------------------------------------------------------------
+      # 2. 准备 Python 和 Pip
       - name: Setup Embed Python
-        shell: bash
-        run: |
-          # 你的脚本已经包含了下载、解压、修改_pth、安装pip的所有功能
-          # 并且它把 python 放在了 install/python
-          python tools/ci/setup_embed_python.py
+        run: python tools/ci/setup_embed_python.py
 
-      # ----------------------------------------------------------------
-      # 下载依赖：使用 install/python/python.exe
-      # ----------------------------------------------------------------
-      - name: Download Python dependencies
-        shell: bash
+      # 3. 下载并安装依赖到嵌入式环境
+      - name: Install Dependencies
         run: |
-          # 下载 whl 包到根目录的 deps 文件夹
-          # 确保使用 install/python/python.exe 运行
-          ./install/python/python.exe tools/ci/download_deps.py --deps-dir deps
+          ./install/python/python.exe -m pip install -r requirements.txt --target ./install/python/Lib/site-packages
 
-      - name: Download drop_core module
-        shell: bash
-        env:
-          PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
-        run: |
-          ./install/python/python.exe tools/ci/download_drop_core.py --os windows --arch ${{ matrix.arch }} || echo "drop_core download skipped"
+      # 4. 组装
+      - name: Bundle
+        run: python tools/ci/install.py ${{ github.ref_name }} win-x64
 
-      # ----------------------------------------------------------------
-      # 执行打包
-      # ----------------------------------------------------------------
-      - name: Install (Build Artifact)
-        shell: bash
-        run: |
-          PLATFORM_TAG="win-${{ steps.platform.outputs.tag }}"
-          
-          # 运行 install.py
-          ./install/python/python.exe ./tools/ci/install.py ${{ needs.meta.outputs.tag }} $PLATFORM_TAG
-          
-          if [ -d "tools/registry" ]; then
-            cp -rpvn tools/registry/. install/
-          fi
-
-      - name: Copy MFA files
-        shell: bash
-        run: |
-          if [ -d "MFA" ]; then
-            mkdir -p install
-            cp -rpvn MFA/. install/
-          fi
-
-      - uses: actions/upload-artifact@v4
+      # 5. 上传最终结果
+      - name: Upload
+        uses: actions/upload-artifact@v4
         with:
-          name: MAAGirlsWar-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-MFAA
-          path: "install"
-
-  changelog:
-    name: Generate changelog
-    needs: meta
-    runs-on: ubuntu-latest
-    outputs:
-      release_body: ${{ steps.git-cliff.outputs.content }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Generate a changelog
-        uses: orhun/git-cliff-action@v4
-        id: git-cliff
-        with:
-          config: .github/cliff.toml
-          args: >-
-            -vv --latest --strip header
-            ${{ needs.meta.outputs.is_prerelease == 'false' && '--tag-pattern "^v[0-9]+\\.[0-9]+\\.[0-9]+$"' || '' }}
-        env:
-          OUTPUT: CHANGES.md
-          GITHUB_REPO: ${{ github.repository }}
-
-  release:
-    if: ${{ needs.meta.outputs.is_release == 'true' }}
-    needs: [meta, windows, changelog]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: assets
-      - name: Process and package artifacts
-        run: |
-          cd assets
-          for f in *; do
-            if [[ $f == *"win"* ]]; then
-              (cd "$f" && zip -r "../$f.zip" .)
-            fi
-          done
-      - uses: softprops/action-gh-release@v2.2.2
-        with:
-          files: assets/*.zip
-          tag_name: ${{ needs.meta.outputs.tag }}
-          body: ${{ needs.changelog.outputs.release_body }}
-          draft: false
-          prerelease: ${{ needs.meta.outputs.is_prerelease == 'true' }}
+          name: MaaGirlsWar-Windows
+          path: install/
