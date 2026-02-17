@@ -1,3 +1,5 @@
+name: Build and Release
+
 on:
   push:
     tags:
@@ -142,33 +144,7 @@ jobs:
           rm -f "${ARCHIVE_FILE_PATH}"
           echo "Archive cleanup command executed for MXU on Windows."
 
-      - name: Convert PNG to ICO
-        if: matrix.arch == 'x86_64'
-        shell: bash
-        run: |
-          # 安装 ImageMagick
-          choco install imagemagick -y
-
-          # 转换 PNG 到 ICO
-          magick convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 MAAGirlsWar.ico
-
-      - name: Modify MFAAvalonia exe icon
-        if: matrix.arch == 'x86_64'
-        shell: bash
-        run: |
-          # 下载 rcedit
-          curl -L https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe -o rcedit.exe
-
-          # 修改 exe 图标
-          ./rcedit.exe "MFA/MFAAvalonia.exe" --set-icon "MAAGirlsWar.ico"
-
-          echo "MFAAvalonia icon modified successfully"
-
-          # 修改 MXU 图标
-          if [ -f "MXU/mxu.exe" ]; then
-            ./rcedit.exe "MXU/mxu.exe" --set-icon "MAAGirlsWar.ico"
-            echo "MXU icon modified successfully"
-          fi
+      # 已移除 Convert PNG to ICO 及 Modify MFAAvalonia exe icon 步骤
 
       - name: Setup Embed Python on Windows
         shell: bash
@@ -238,25 +214,7 @@ jobs:
             echo "MXU directory not found, skipping copy."
           fi
 
-      # - name: Copy custom icons
-      #   shell: bash
-      #   run: |
-      #     # 删除 MFAA 自带的 Assets 文件夹
-      #     if [ -d "install/Assets" ]; then
-      #       rm -rf install/Assets
-      #       echo "Removed original Assets folder"
-      #     fi
-
-      #     # MFAA 版本的图标放根目录
-      #     if [ -f "MAAGirlsWar.ico" ]; then
-      #       cp MAAGirlsWar.ico install/logo.ico
-      #       echo "Copied custom icon to install/logo.ico"
-      #     fi
-
-      #     # MXU 版本的图标
-      #     if [ -f "MAAGirlsWar.ico" ]; then
-      #       cp MAAGirlsWar.ico install-mxu/logo.ico
-      #     fi
+      # 已移除 Copy custom icons 步骤
 
       - uses: actions/upload-artifact@v4
         with:
@@ -341,31 +299,24 @@ jobs:
           rm -f "${ARCHIVE_FILE_PATH}"
           echo "Archive cleanup command executed for MXU on Linux."
 
-      - name: Convert PNG to ICO
-        shell: bash
-        run: |
-          # 安装 ImageMagick（如果未安装）
-          sudo apt-get update && sudo apt-get install -y imagemagick
-
-          # 转换 PNG 到 ICO
-          convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 MAAGirlsWar.ico
+      # 已移除 Convert PNG to ICO 步骤
 
       - name: Download Python dependencies
         shell: bash
         run: |
-          python tools/ci/download_deps.py --deps-dir install/deps
+          python3 tools/ci/download_deps.py --deps-dir install/deps
 
       - name: Download drop_core module
         shell: bash
         env:
           PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
         run: |
-          python tools/ci/download_drop_core.py --os linux --arch ${{ matrix.arch }} || echo "drop_core download skipped"
+          python3 tools/ci/download_drop_core.py --os linux --arch ${{ matrix.arch }} || echo "drop_core download skipped"
 
       - name: Install on Linux
         shell: bash
         run: |
-          PYTHON_EXECUTABLE="python"
+          PYTHON_EXECUTABLE="python3"
           PLATFORM_TAG="linux-${{ steps.platform.outputs.tag }}"
           echo "Using Python executable: $PYTHON_EXECUTABLE for Linux"
           $PYTHON_EXECUTABLE ./tools/ci/install.py ${{ needs.meta.outputs.tag }} $PLATFORM_TAG
@@ -373,7 +324,7 @@ jobs:
       - name: Create CLI version
         shell: bash
         run: |
-          python ./tools/ci/install_cli.py ${{ needs.meta.outputs.tag }}
+          python3 ./tools/ci/install_cli.py ${{ needs.meta.outputs.tag }}
           if [ -d "install/python" ]; then
             cp -rpvn install/python/. install-cli/python/
           fi
@@ -383,7 +334,7 @@ jobs:
         if: matrix.arch == 'x86_64'
         shell: bash
         run: |
-          PYTHON_EXECUTABLE="python"
+          PYTHON_EXECUTABLE="python3"
           $PYTHON_EXECUTABLE ./tools/ci/install_mxu.py ${{ needs.meta.outputs.tag }}
           if [ -d "install/python" ]; then
             cp -rpvn install/python/. install-mxu/python/
@@ -417,25 +368,7 @@ jobs:
             echo "MXU directory not found on Linux, skipping copy."
           fi
 
-      - name: Copy custom icons
-        shell: bash
-        run: |
-          # 删除 MFAA 自带的 Assets 文件夹
-          if [ -d "install/Assets" ]; then
-            rm -rf install/Assets
-            echo "Removed original Assets folder"
-          fi
-
-          # MFAA 版本的图标放根目录
-          if [ -f "MAAGirlsWar.ico" ]; then
-            cp MAAGirlsWar.ico install/logo.ico
-            echo "Copied custom icon to install/logo.ico"
-          fi
-
-          # MXU 版本的图标
-          if [ -d "install-mxu" ] && [ -f "MAAGirlsWar.ico" ]; then
-            cp MAAGirlsWar.ico install-mxu/logo.ico
-          fi
+      # 已移除 Copy custom icons 步骤
 
       - uses: actions/upload-artifact@v4
         with:
@@ -522,14 +455,7 @@ jobs:
           rm -f "${ARCHIVE_FILE_PATH}"
           echo "Archive cleanup command executed for MXU on macOS."
 
-      - name: Convert PNG to ICO
-        shell: bash
-        run: |
-          # 安装 ImageMagick（如果未安装）
-          brew install imagemagick
-
-          # 转换 PNG 到 ICO
-          magick convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 MAAGirlsWar.ico
+      # 已移除 Convert PNG to ICO 步骤
 
       - name: Setup Embed Python on macOS
         shell: bash
@@ -604,25 +530,7 @@ jobs:
             echo "MXU directory not found on macOS, skipping copy."
           fi
 
-      - name: Copy custom icons
-        shell: bash
-        run: |
-          # 删除 MFAA 自带的 Assets 文件夹
-          if [ -d "install/Assets" ]; then
-            rm -rf install/Assets
-            echo "Removed original Assets folder"
-          fi
-
-          # MFAA 版本的图标放根目录
-          if [ -f "MAAGirlsWar.ico" ]; then
-            cp MAAGirlsWar.ico install/logo.ico
-            echo "Copied custom icon to install/logo.ico"
-          fi
-
-          # MXU 版本的图标
-          if [ -f "MAAGirlsWar.ico" ]; then
-            cp MAAGirlsWar.ico install-mxu/logo.ico
-          fi
+      # 已移除 Copy custom icons 步骤
 
       - uses: actions/upload-artifact@v4
         with:
