@@ -12,11 +12,14 @@ try {
     # Get latest release information
     $ReleaseInfo = Invoke-RestMethod -Uri $RepoUrl -Method Get
     
-    # Find asset file matching pattern
-    $Asset = $ReleaseInfo.assets | Where-Object { $_.name -match "^Maa.*-win-x86_64-v\d+\.\d+\.\d+\.zip$" }
+    # Find asset file matching the correct pattern (MaaGirlsWar-win-x64.zip)
+    $Asset = $ReleaseInfo.assets | Where-Object { $_.name -match "^MaaGirlsWar-win-x64\.zip$" }
     
     if ($null -eq $Asset) {
-        Write-Error "No matching archive file found"
+        Write-Error "No matching archive file found. Available assets:"
+        foreach ($availableAsset in $ReleaseInfo.assets) {
+            Write-Host "  - $($availableAsset.name)"
+        }
         exit 1
     }
     

@@ -12,43 +12,26 @@ from configure import configure_ocr_model
 from generate_manifest_cache import generate_manifest_cache
 
 working_dir = Path(__file__).parent.parent.parent
-install_path = working_dir / Path("install")
+install_path = working_dir / Path("install-cli")
 version = len(sys.argv) > 1 and sys.argv[1] or "v0.0.1"
-platform_tag = len(sys.argv) > 2 and sys.argv[2] or ""
 
 
-def install_deps(platform_tag: str):
-    """安装 MaaFramework 依赖到对应架构路径
-
-    Args:
-        platform_tag: 平台标签，如 win-x64, linux-arm64, osx-arm64
-    """
-    if not platform_tag:
-        raise ValueError("platform_tag is required")
-
+def install_deps():
     shutil.copytree(
         working_dir / "deps" / "bin",
-        install_path / "runtimes" / platform_tag / "native",
+        install_path,
         ignore=shutil.ignore_patterns(
             "*MaaDbgControlUnit*",
             "*MaaThriftControlUnit*",
             "*MaaWin32ControlUnit*",
             "*MaaRpc*",
             "*MaaHttp*",
-            "plugins",
-            "*.node",
-            "*MaaPiCli*",
         ),
         dirs_exist_ok=True,
     )
     shutil.copytree(
         working_dir / "deps" / "share" / "MaaAgentBinary",
-        install_path / "libs" / "MaaAgentBinary",
-        dirs_exist_ok=True,
-    )
-    shutil.copytree(
-        working_dir / "deps" / "bin" / "plugins",
-        install_path / "plugins" / platform_tag,
+        install_path / "MaaAgentBinary",
         dirs_exist_ok=True,
     )
 
@@ -63,8 +46,8 @@ def install_resource():
         dirs_exist_ok=True,
     )
     shutil.copy2(
-        working_dir / "assets" / "interface.json",
-        install_path,
+        working_dir / "assets" / "interface_cli.json",
+        install_path / "interface.json",
     )
 
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
@@ -127,7 +110,7 @@ def install_manifest_cache():
 
 
 if __name__ == "__main__":
-    install_deps(platform_tag)
+    install_deps()
     install_resource()
     install_chores()
     install_agent()
