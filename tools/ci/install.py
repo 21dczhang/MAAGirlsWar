@@ -3,13 +3,14 @@ from pathlib import Path
 import shutil
 import sys
 import json
+import re
 import os
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(script_dir)
 
 from configure import configure_ocr_model
-from generate_manifest_cache import generate_manifest_cache
+# from generate_manifest_cache import generate_manifest_cache
 
 working_dir = Path(__file__).parent.parent.parent
 install_path = working_dir / Path("install")
@@ -19,13 +20,13 @@ platform_tag = len(sys.argv) > 2 and sys.argv[2] or ""
 
 def install_deps(platform_tag: str):
     """安装 MaaFramework 依赖到对应架构路径
-
+    
     Args:
         platform_tag: 平台标签，如 win-x64, linux-arm64, osx-arm64
     """
     if not platform_tag:
         raise ValueError("platform_tag is required")
-
+    
     shutil.copytree(
         working_dir / "deps" / "bin",
         install_path / "runtimes" / platform_tag / "native",
@@ -35,20 +36,12 @@ def install_deps(platform_tag: str):
             "*MaaWin32ControlUnit*",
             "*MaaRpc*",
             "*MaaHttp*",
-            "plugins",
-            "*.node",
-            "*MaaPiCli*",
         ),
         dirs_exist_ok=True,
     )
     shutil.copytree(
         working_dir / "deps" / "share" / "MaaAgentBinary",
-        install_path / "libs" / "MaaAgentBinary",
-        dirs_exist_ok=True,
-    )
-    shutil.copytree(
-        working_dir / "deps" / "bin" / "plugins",
-        install_path / "plugins" / platform_tag,
+        install_path / "MaaAgentBinary",
         dirs_exist_ok=True,
     )
 
@@ -71,14 +64,14 @@ def install_resource():
         interface = json.load(f)
 
     interface["version"] = version
-    interface["title"] = f"M9A {version} | 亿韭韭韭小助手"
+    interface["custom_title"] = f"M2gyro 两个陀螺猛猛抽 | {version}"
 
     with open(install_path / "interface.json", "w", encoding="utf-8") as f:
         json.dump(interface, f, ensure_ascii=False, indent=4)
 
 
 def install_chores():
-    for file in ["README.md", "LICENSE", "CONTACT", "requirements.txt"]:
+    for file in ["README.md", "LICENSE", "requirements.txt"]:
         shutil.copy2(
             working_dir / file,
             install_path,
@@ -90,6 +83,35 @@ def install_chores():
     #     ignore=shutil.ignore_patterns("*.yaml"),
     # )
 
+# 万能带注释JSON解析函数：自动清理//注释、/*多行注释、#注释 + 单引号替换双引号
+def load_json_with_comment_and_quote(file_path, encoding="utf-8"):
+    # 1. 读取JSON文件全部内容
+    with open(file_path, 'r', encoding=encoding) as f:
+        content = f.read()
+    # 2. 保护常见 URL 模式，避免将 URL 中的 // 误判为注释起始
+    mask = "::COLON_SLASH::"
+    content = content.replace('://', mask)
+
+    # 3. 正则清理：删除 /*  */ 包裹的多行注释
+    content = re.sub(r"/\*[\s\S]*?\*/", "", content)
+    # 4. 正则清理：删除 // 开头的单行注释（现在不会影响 URL）
+    content = re.sub(r"//.*", "", content)
+    # 5. 正则清理：删除 # 开头的Python风格注释
+    content = re.sub(r"#.*", "", content)
+
+    # 6. 将单引号替换为双引号（注意：此替换仍然是简单替换，
+    #    若文件中大量使用单引号作为字符串边界且包含复杂转义，
+    #    更强健的解析器会更安全。）
+    content = re.sub(r"'", '"', content)
+
+    # 7. 清理多余空行和首尾空格
+    content = "\n".join([line.strip() for line in content.splitlines() if line.strip()])
+
+    # 8. 恢复被掩码的 URL
+    content = content.replace(mask, '://')
+
+    # 9. 用原生json解析处理后的纯净内容
+    return json.loads(content)
 
 def install_agent():
     shutil.copytree(
@@ -98,8 +120,7 @@ def install_agent():
         dirs_exist_ok=True,
     )
 
-    with open(install_path / "interface.json", "r", encoding="utf-8") as f:
-        interface = json.load(f)
+    interface = load_json_with_comment_and_quote(install_path / "interface.json")
 
     if sys.platform.startswith("win"):
         interface["agent"]["child_exec"] = r"./python/python.exe"
@@ -114,16 +135,16 @@ def install_agent():
         json.dump(interface, f, ensure_ascii=False, indent=4)
 
 
-def install_manifest_cache():
-    """生成初始 manifest 缓存，加速用户首次启动"""
-    config_dir = install_path / "config"
-    success = generate_manifest_cache(config_dir)
-    if success:
-        print("Manifest cache generated successfully.")
-    else:
-        print(
-            "Warning: Manifest cache generation failed, users will do full check on first run."
-        )
+# def install_manifest_cache():
+#     """生成初始 manifest 缓存，加速用户首次启动"""
+#     config_dir = install_path / "config"
+#     success = generate_manifest_cache(config_dir)
+#     if success:
+#         print("Manifest cache generated successfully.")
+#     else:
+#         print(
+#             "Warning: Manifest cache generation failed, users will do full check on first run."
+#         )
 
 
 if __name__ == "__main__":
@@ -131,6 +152,6 @@ if __name__ == "__main__":
     install_resource()
     install_chores()
     install_agent()
-    install_manifest_cache()
+    # install_manifest_cache()
 
     print(f"Install to {install_path} successfully.")

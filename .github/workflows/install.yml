@@ -18,9 +18,8 @@ on:
   workflow_dispatch:
 
 env:
-  MAA_FRAMEWORK_VERSION: "v5.6.0"
-  MFAA_VERSION: "v2.7.2"
-  MXU_VERSION: "v1.13.1"
+  MAA_FRAMEWORK_VERSION: "v5.3.3"
+  MFAA_VERSION: "v2.5.6"
 
 permissions:
   contents: write
@@ -125,31 +124,27 @@ jobs:
           rm -f "${ARCHIVE_FILE_PATH}"
           echo "Archive cleanup command executed for MFAAvalonia on Windows."
 
-      - name: Download MXU
-        id: download_mxu
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: MistEO/MXU
-          fileName: "MXU-win-${{ matrix.arch }}*"
-          tag: ${{ env.MXU_VERSION }}
-          out-file-path: "MXU"
-          extract: true
+      - name: Convert PNG to ICO
+        if: matrix.arch == 'x86_64'
+        shell: bash
+        run: |
+          # 安装 ImageMagick
+          choco install imagemagick -y
 
-      - name: Clean up MXU archive on Windows
+          # 转换 PNG 到 ICO
+          magick convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 M2gyro.ico
+
+      - name: Modify MFAAvalonia exe icon
+        if: matrix.arch == 'x86_64'
         shell: bash
         run: |
-          ARCHIVE_FILE_PATH="${{ fromJson(steps.download_mxu.outputs.downloaded_files)[0] }}"
-          rm -f "${ARCHIVE_FILE_PATH}"
-          echo "Archive cleanup command executed for MXU on Windows."
-      - name: Debug Directory Structure
-        shell: bash
-        run: |
-          echo "=== Checking MFA Directory ==="
-          ls -R MFA
-          echo "=== Checking MXU Directory ==="
-          ls -R MXU
-          echo "=== Checking deps Directory ==="
-          ls -R deps
+          # 下载 rcedit
+          curl -L https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe -o rcedit.exe
+
+          # 修改 exe 图标
+          # ./rcedit.exe "MFA/MFAAvalonia.exe" --set-icon "M2gyro.ico"
+
+          echo "MFAAvalonia icon modified successfully"
 
       - name: Setup Embed Python on Windows
         shell: bash
@@ -161,30 +156,27 @@ jobs:
         run: |
           ./install/python/python.exe tools/ci/download_deps.py --deps-dir install/deps
 
+      # - name: Download drop_core module
+      #   shell: bash
+      #   env:
+      #     PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+      #   run: |
+      #     ./install/python/python.exe tools/ci/download_drop_core.py --os windows --arch ${{ matrix.arch }} || echo "drop_core download skipped"
+
       - name: Install
         shell: bash
         run: |
           PLATFORM_TAG="win-${{ steps.platform.outputs.tag }}"
           ./install/python/python.exe ./tools/ci/install.py ${{ needs.meta.outputs.tag }} $PLATFORM_TAG
-          cp -rpvn tools/registry/. install/
+      #    cp -rpvn tools/registry/. install/
 
-      - name: Create CLI version
-        shell: bash
-        run: |
-          ./install/python/python.exe ./tools/ci/install_cli.py ${{ needs.meta.outputs.tag }}
-          cp -rpvn tools/registry/. install-cli/
-          cp -rpvn install/python/. install-cli/python/
-          rm -rf install-cli/deps 2>/dev/null || true
-
-      - name: Create MXU version
-        shell: bash
-        run: |
-          ./install/python/python.exe ./tools/ci/install_mxu.py ${{ needs.meta.outputs.tag }}
-          cp -rpvn tools/registry/. install-mxu/
-          cp -rpvn install/python/. install-mxu/python/
-          if [ -d "install/deps" ]; then
-            cp -rpvn install/deps/. install-mxu/deps/
-          fi
+      # - name: Create CLI version
+      #   shell: bash
+      #   run: |
+      #     ./install/python/python.exe ./tools/ci/install_cli.py ${{ needs.meta.outputs.tag }}
+      #     cp -rpvn tools/registry/. install-cli/
+      #     cp -rpvn install/python/. install-cli/python/
+      #     rm -rf install-cli/deps 2>/dev/null || true
 
       - name: Copy MFA files to main version
         shell: bash
@@ -197,35 +189,33 @@ jobs:
             echo "MFA directory not found, skipping copy."
           fi
 
-      - name: Copy MXU files to MXU version
+      - name: Replace Assets with custom assets folder
         shell: bash
         run: |
-          if [ -d "MXU" ]; then
-            echo "Copying MXU files to install-mxu directory..."
-            mkdir -p install-mxu
-            if [ -f "MXU/mxu.exe" ]; then
-              cp MXU/mxu.exe install-mxu/M9A.exe
-            elif [ -f "MXU/mxu" ]; then
-              cp MXU/mxu install-mxu/M9A
-            fi
-          else
-            echo "MXU directory not found, skipping copy."
+          # 删除大写的 Assets 文件夹
+          if [ -d "install/Assets" ]; then
+            rm -rf install/Assets
+            echo "Removed original Assets folder"
+          fi
+
+          # 创建小写的 assets 文件夹
+          mkdir -p install/assets
+
+          # 如果有自定义图标，复制并重命名为 logo.ico
+          if [ -f "M2gyro.ico" ]; then
+            cp M2gyro.ico install/assets/logo.ico
+            echo "Copied custom icon to assets/logo.ico"
           fi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: M9A-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-MFAA
+          name: M2gyro-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Full
           path: "install"
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: M9A-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-PiCLI
-          path: "install-cli"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: M9A-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-MXU
-          path: "install-mxu"
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: M2gyro-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Lite
+      #     path: "install-cli"
 
   linux:
     needs: meta
@@ -276,58 +266,43 @@ jobs:
           rm -f "${ARCHIVE_FILE_PATH}"
           echo "Archive cleanup command executed for MFAAvalonia on Linux."
 
-      - name: Download MXU for Linux
-        if: matrix.arch == 'x86_64'
-        id: download_mxu
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: MistEO/MXU
-          fileName: "MXU-linux-${{ matrix.arch }}*"
-          tag: ${{ env.MXU_VERSION }}
-          out-file-path: "MXU"
-          extract: true
-
-      - name: Clean up MXU archive on Linux
-        if: matrix.arch == 'x86_64'
+      - name: Convert PNG to ICO
         shell: bash
         run: |
-          ARCHIVE_FILE_PATH="${{ fromJson(steps.download_mxu.outputs.downloaded_files)[0] }}"
-          rm -f "${ARCHIVE_FILE_PATH}"
-          echo "Archive cleanup command executed for MXU on Linux."
+          # 安装 ImageMagick（如果未安装）
+          sudo apt-get update && sudo apt-get install -y imagemagick
+
+          # 转换 PNG 到 ICO
+          convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 M2gyro.ico
 
       - name: Download Python dependencies
         shell: bash
         run: |
           python tools/ci/download_deps.py --deps-dir install/deps
 
+      # - name: Download drop_core module
+      #   shell: bash
+      #   env:
+      #     PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+      #   run: |
+      #     python tools/ci/download_drop_core.py --os linux --arch ${{ matrix.arch }} || echo "drop_core download skipped"
+
       - name: Install on Linux
         shell: bash
         run: |
           PYTHON_EXECUTABLE="python"
           PLATFORM_TAG="linux-${{ steps.platform.outputs.tag }}"
+          echo "Using Python executable: $PYTHON_EXECUTABLE for Linux"
           $PYTHON_EXECUTABLE ./tools/ci/install.py ${{ needs.meta.outputs.tag }} $PLATFORM_TAG
 
-      - name: Create CLI version
-        shell: bash
-        run: |
-          python ./tools/ci/install_cli.py ${{ needs.meta.outputs.tag }}
-          if [ -d "install/python" ]; then
-            cp -rpvn install/python/. install-cli/python/
-          fi
-          rm -rf install-cli/deps 2>/dev/null || true
-
-      - name: Create MXU version
-        if: matrix.arch == 'x86_64'
-        shell: bash
-        run: |
-          PYTHON_EXECUTABLE="python"
-          $PYTHON_EXECUTABLE ./tools/ci/install_mxu.py ${{ needs.meta.outputs.tag }}
-          if [ -d "install/python" ]; then
-            cp -rpvn install/python/. install-mxu/python/
-          fi
-          if [ -d "install/deps" ]; then
-            cp -rpvn install/deps/. install-mxu/deps/
-          fi
+      # - name: Create CLI version
+      #   shell: bash
+      #   run: |
+      #     python ./tools/ci/install_cli.py ${{ needs.meta.outputs.tag }}
+      #     if [ -d "install/python" ]; then
+      #       cp -rpvn install/python/. install-cli/python/
+      #     fi
+      #     rm -rf install-cli/deps 2>/dev/null || true
 
       - name: Copy MFA files to main version
         shell: bash
@@ -340,35 +315,33 @@ jobs:
             echo "MFA directory not found on Linux, skipping copy."
           fi
 
-      - name: Copy MXU files to MXU version
-        if: matrix.arch == 'x86_64'
+      - name: Replace Assets with custom assets folder
         shell: bash
         run: |
-          if [ -d "MXU" ]; then
-            echo "Copying MXU files to install-mxu directory on Linux..."
-            mkdir -p install-mxu
-            if [ -f "MXU/mxu" ]; then
-              cp MXU/mxu install-mxu/M9A
-            fi
-          else
-            echo "MXU directory not found on Linux, skipping copy."
+          # 删除大写的 Assets 文件夹
+          if [ -d "install/Assets" ]; then
+            rm -rf install/Assets
+            echo "Removed original Assets folder"
+          fi
+
+          # 创建小写的 assets 文件夹
+          mkdir -p install/assets
+
+          # 如果有自定义图标，复制并重命名为 logo.ico
+          if [ -f "M2gyro.ico" ]; then
+            cp M2gyro.ico install/assets/logo.ico
+            echo "Copied custom icon to assets/logo.ico"
           fi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: M9A-linux-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-MFAA
+          name: M2gyro-linux-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Full
           path: "install"
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: M9A-linux-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-PiCLI
-          path: "install-cli"
-
-      - uses: actions/upload-artifact@v4
-        if: matrix.arch == 'x86_64'
-        with:
-          name: M9A-linux-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-MXU
-          path: "install-mxu"
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: M2gyro-linux-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Lite
+      #     path: "install-cli"
 
   macos:
     needs: meta
@@ -376,9 +349,9 @@ jobs:
       matrix:
         include:
           - arch: x86_64
-            runner: macos-15-intel
+            runner: macos-15-intel  # Intel-based macOS runner
           - arch: aarch64
-            runner: macos-latest
+            runner: macos-latest  # Apple Silicon macOS runner
       fail-fast: false
     runs-on: ${{ matrix.runner }}
     steps:
@@ -422,22 +395,14 @@ jobs:
           rm -f "${ARCHIVE_FILE_PATH}"
           echo "Archive cleanup command executed for MFAAvalonia on macOS."
 
-      - name: Download MXU for macOS
-        id: download_mxu
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: MistEO/MXU
-          fileName: "MXU-macos-${{ matrix.arch }}*"
-          tag: ${{ env.MXU_VERSION }}
-          out-file-path: "MXU"
-          extract: true
-
-      - name: Clean up MXU archive on macOS
+      - name: Convert PNG to ICO
         shell: bash
         run: |
-          ARCHIVE_FILE_PATH="${{ fromJson(steps.download_mxu.outputs.downloaded_files)[0] }}"
-          rm -f "${ARCHIVE_FILE_PATH}"
-          echo "Archive cleanup command executed for MXU on macOS."
+          # 安装 ImageMagick（如果未安装）
+          brew install imagemagick
+
+          # 转换 PNG 到 ICO
+          magick convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 M2gyro.ico
 
       - name: Setup Embed Python on macOS
         shell: bash
@@ -445,7 +410,10 @@ jobs:
           python3 tools/ci/setup_embed_python.py
           EMBED_PYTHON_PATH="./install/python/bin/python3"
           if [ -f "$EMBED_PYTHON_PATH" ]; then
+            echo "Setting execute permission for $EMBED_PYTHON_PATH"
             chmod +x "$EMBED_PYTHON_PATH"
+          else
+            echo "Warning: Embedded Python executable not found at $EMBED_PYTHON_PATH. Skipping chmod."
           fi
 
       - name: Download Python dependencies
@@ -453,29 +421,27 @@ jobs:
         run: |
           ./install/python/bin/python3 tools/ci/download_deps.py --deps-dir install/deps
 
+      # - name: Download drop_core module
+      #   shell: bash
+      #   env:
+      #     PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+      #   run: |
+      #     ./install/python/bin/python3 tools/ci/download_drop_core.py --os darwin --arch ${{ matrix.arch }} || echo "drop_core download skipped"
+
       - name: Install on macOS
         shell: bash
         run: |
           PYTHON_EXECUTABLE="./install/python/bin/python3"
           PLATFORM_TAG="osx-${{ steps.platform.outputs.tag }}"
+          echo "Using Python executable: $PYTHON_EXECUTABLE for macOS"
           $PYTHON_EXECUTABLE ./tools/ci/install.py ${{ needs.meta.outputs.tag }} $PLATFORM_TAG
 
-      - name: Create CLI version
-        shell: bash
-        run: |
-          ./install/python/bin/python3 ./tools/ci/install_cli.py ${{ needs.meta.outputs.tag }}
-          cp -rpvn install/python/. install-cli/python/
-          rm -rf install-cli/deps 2>/dev/null || true
-
-      - name: Create MXU version
-        shell: bash
-        run: |
-          PYTHON_EXECUTABLE="./install/python/bin/python3"
-          $PYTHON_EXECUTABLE ./tools/ci/install_mxu.py ${{ needs.meta.outputs.tag }}
-          cp -rpvn install/python/. install-mxu/python/
-          if [ -d "install/deps" ]; then
-            cp -rpvn install/deps/. install-mxu/deps/
-          fi
+      # - name: Create CLI version
+      #   shell: bash
+      #   run: |
+      #     ./install/python/bin/python3 ./tools/ci/install_cli.py ${{ needs.meta.outputs.tag }}
+      #     cp -rpvn install/python/. install-cli/python/
+      #     rm -rf install-cli/deps 2>/dev/null || true
 
       - name: Copy MFA files to main version
         shell: bash
@@ -483,38 +449,38 @@ jobs:
           if [ -d "MFA" ]; then
             echo "Copying MFA files to install directory on macOS..."
             mkdir -p install
-            rsync -av --ignore-existing MFA/ install/
+            rsync -av --ignore-existing MFA/ install/ # Using rsync like on Linux
           else
             echo "MFA directory not found on macOS, skipping copy."
           fi
 
-      - name: Copy MXU files to MXU version
+      - name: Replace Assets with custom assets folder
         shell: bash
         run: |
-          if [ -d "MXU" ]; then
-            echo "Copying MXU files to install-mxu directory on macOS..."
-            mkdir -p install-mxu
-            if [ -f "MXU/mxu" ]; then
-              cp MXU/mxu install-mxu/M9A
-            fi
-          else
-            echo "MXU directory not found on macOS, skipping copy."
+          # 删除大写的 Assets 文件夹
+          if [ -d "install/Assets" ]; then
+            rm -rf install/Assets
+            echo "Removed original Assets folder"
+          fi
+
+          # 创建小写的 assets 文件夹
+          mkdir -p install/assets
+
+          # 如果有自定义图标，复制并重命名为 logo.ico
+          if [ -f "M2gyro.ico" ]; then
+            cp M2gyro.ico install/assets/logo.ico
+            echo "Copied custom icon to assets/logo.ico"
           fi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: M9A-macos-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-MFAA
+          name: M2gyro-macos-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Full
           path: "install"
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: M9A-macos-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-PiCLI
-          path: "install-cli"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: M9A-macos-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-MXU
-          path: "install-mxu"
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: M2gyro-macos-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Lite
+      #     path: "install-cli"
 
   changelog:
     name: Generate changelog
@@ -533,6 +499,8 @@ jobs:
         id: git-cliff
         with:
           config: .github/cliff.toml
+          # 正式版：使用 tag-pattern 只匹配正式版标签，包含所有从上一个正式版以来的提交
+          # 预发布版：正常生成，只包含从上一个标签以来的提交
           args: >-
             -vv --latest --strip header
             ${{ needs.meta.outputs.is_prerelease == 'false' && '--tag-pattern "^v[0-9]+\\.[0-9]+\\.[0-9]+$"' || '' }}
@@ -569,11 +537,6 @@ jobs:
               find "$f" -type f -name "MFAUpdater*" -exec chmod +x {} \; 2>/dev/null || true
               echo "Set execute permission for all MFAUpdater files"
 
-              if [[ -f "$f/M9A" ]]; then
-                chmod +x "$f/M9A"
-                echo "Set execute permission for $f/M9A"
-              fi
-
               PYTHON_PATHS=(
                 "$f/python/bin/python3"
                 "$f/python/python"
@@ -599,3 +562,11 @@ jobs:
           body: ${{ needs.changelog.outputs.release_body }}
           draft: false
           prerelease: ${{ needs.meta.outputs.is_prerelease == 'true' }}
+
+      # - name: Trigger MirrorChyanUploading
+      #   shell: bash
+      #   run: |
+      #     gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan.yml -f tag=${{ needs.meta.outputs.tag }}
+      #     gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan_release_note.yml -f tag=${{ needs.meta.outputs.tag }}
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

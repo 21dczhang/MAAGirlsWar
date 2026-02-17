@@ -1,3 +1,15 @@
+"""
+Agent入口
+该文件的作用为：
+将自定义的Agent功能注册到Agent服务器中，便于在调试时使用
+"""
+
+# import sys
+# from maa.agent.agent_server import AgentServer
+# from maa.toolkit import Toolkit
+
+# from Agent_file import *
+
 # -*- coding: utf-8 -*-
 
 import os
@@ -23,7 +35,7 @@ print(f"set cwd: {os.getcwd()}")
 if current_script_dir not in sys.path:
     sys.path.insert(0, current_script_dir)
 
-from utils import logger
+from utils.logger import logger
 
 VENV_NAME = ".venv"  # 虚拟环境目录的名称
 VENV_DIR = Path(project_root_dir) / VENV_NAME
@@ -189,6 +201,14 @@ def read_pip_config() -> dict:
         "backup_mirror": "https://mirrors.ustc.edu.cn/pypi/simple",
     }
     return read_config("pip_config", default_config)
+
+
+def read_hot_update_config() -> dict:
+    """
+    读取热更配置
+    """
+    default_config = {"enable_hot_update": True}
+    return read_config("hot_update", default_config)
 
 
 # -----
@@ -391,22 +411,72 @@ def agent(is_dev_mode=False):
             change_console_level("DEBUG")
             logger.info("开发模式：日志等级已设置为DEBUG")
 
-        # ========== 版本检查（始终执行） ==========
-        from utils.version_checker import check_resource_version
+        # if not is_dev_mode:
+        #     # ========== 版本检查（始终执行） ==========
+        #     from utils.version_checker import check_resource_version
 
-        version_info = check_resource_version()
-        if not version_info["is_latest"]:
-            logger.warning("检测到资源有新版本!")
-            logger.warning(f"当前资源版本: {version_info['current_version']}")
-            logger.warning(f"最新资源版本: {version_info['latest_version']}")
-        elif version_info["error"]:
-            logger.debug(f"资源版本检查遇到问题: {version_info['error']}")
+        #     version_info = check_resource_version()
+        #     if not version_info["is_latest"]:
+        #         logger.warning("检测到资源有新版本!")
+        #         logger.warning(f"当前资源版本: {version_info['current_version']}")
+        #         logger.warning(f"最新资源版本: {version_info['latest_version']}")
+        #     elif version_info["error"]:
+        #         logger.debug(f"资源版本检查遇到问题: {version_info['error']}")
 
-        # ========== 核心逻辑 ==========
+        #     # ========== 热更新：基于 manifest 时间戳优化 ==========
+        #     hot_update_conf = read_hot_update_config()
+        #     if not hot_update_conf.get("enable_hot_update", True):
+        #         logger.info("已配置为跳过部分资源热更")
+        #     else:
+        #         from utils.manifest_checker import (
+        #             check_manifest_updates,
+        #             save_manifest_cache_from_result,
+        #         )
+
+        #         manifest_result = check_manifest_updates()
+
+        #         # 如果没有任何更新，跳过热更新
+        #         if manifest_result["success"] and not manifest_result["has_any_update"]:
+        #             logger.debug("资源无更新，跳过热更新")
+        #         else:
+        #             # 有更新或检查失败，执行热更新流程
+        #             updated_manifests = manifest_result.get("updated_manifests", [])
+
+        #             if updated_manifests or not manifest_result["success"]:
+        #                 from utils.resource_updater import check_and_update_resources
+
+        #                 # 只更新有变化的 manifest
+        #                 manifests = (
+        #                     updated_manifests if manifest_result["success"] else None
+        #                 )
+        #                 if manifests:
+        #                     logger.debug(f"开始更新 {len(manifests)} 个资源清单...")
+        #                 else:
+        #                     logger.debug("开始检查所有资源...")
+
+        #                 update_result = check_and_update_resources(
+        #                     resource_manifests=manifests
+        #                 )
+        #                 if update_result and update_result.get("updated_files"):
+        #                     pass
+        #                 elif update_result and update_result.get("error"):
+        #                     logger.debug(
+        #                         f"热更部分资源更新遇到问题: {update_result['error']}"
+        #                     )
+        #                 else:
+        #                     logger.debug("热更部分资源已是最新")
+        #             else:
+        #                 logger.debug("所有 manifest 无更新，跳过热更新")
+
+        #         # 检查成功后保存 manifest 缓存（无论是否有更新）
+        #         save_manifest_cache_from_result(manifest_result)
+        #     # ========== 热更新结束 ==========
+
         from maa.agent.agent_server import AgentServer
         from maa.toolkit import Toolkit
-
+        
         import custom
+        import Agent_file
 
         Toolkit.init_option("./")
 
@@ -455,3 +525,20 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# def main():
+#     Toolkit.init_option("./")
+#     # 支持自定义socket_id，方便多实例运行
+#     if len(sys.argv) > 1:
+#         print("使用自定义socket_id: " + sys.argv[-1])
+#         socket_id = sys.argv[-1]
+#     else:
+#         print("使用默认socket_id: MAA_AGENT_SOCKET")
+#         socket_id = "MAA_AGENT_SOCKET"
+#     AgentServer.start_up(socket_id)
+#     AgentServer.join()
+#     AgentServer.shut_down()
+
+
+# if __name__ == "__main__":
+#     main()
