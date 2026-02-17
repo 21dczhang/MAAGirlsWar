@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import shutil
+import subprocess
 import sys
 
 try:
@@ -98,7 +99,6 @@ def install_deps():
         )
 
 
-
 def install_resource():
 
     configure_ocr_model()
@@ -117,6 +117,14 @@ def install_resource():
         interface = jsonc.load(f)
 
     interface["version"] = version
+
+    # 开发模式下 agent 路径是 "./../agent/main.py"（assets/ 旁边）
+    # 打包后 interface.json 和 agent/ 同级，改为 "./agent/main.py"
+    if "agent" in interface and "child_args" in interface["agent"]:
+        interface["agent"]["child_args"] = [
+            arg.replace("./../agent/", "./agent/")
+            for arg in interface["agent"]["child_args"]
+        ]
 
     with open(install_path / "interface.json", "w", encoding="utf-8") as f:
         jsonc.dump(interface, f, ensure_ascii=False, indent=4)
@@ -141,10 +149,43 @@ def install_agent():
     )
 
 
+def install_python_env():
+    """
+    打包时在 install/.venv 中创建虚拟环境并预装所有依赖。
+    用户拿到产物后直接运行，无需联网安装。
+    """
+    req_file = working_dir / "requirements.txt"
+    if not req_file.exists():
+        print("requirements.txt not found, skipping python env setup.")
+        return
+
+    venv_dir = install_path / ".venv"
+    print(f"Creating venv at {venv_dir} ...")
+    subprocess.check_call([sys.executable, "-m", "venv", str(venv_dir)])
+
+    # 找 venv 内的 python / pip
+    if os_name == "win":
+        venv_python = venv_dir / "Scripts" / "python.exe"
+    else:
+        venv_python = venv_dir / "bin" / "python3"
+        if not venv_python.exists():
+            venv_python = venv_dir / "bin" / "python"
+
+    print("Installing dependencies into venv ...")
+    subprocess.check_call([
+        str(venv_python), "-m", "pip", "install",
+        "-r", str(req_file),
+        "--no-warn-script-location",
+        "-q",
+    ])
+    print("Python env ready.")
+
+
 if __name__ == "__main__":
     install_deps()
     install_resource()
     install_chores()
     install_agent()
+    install_python_env()   # ← 新增：打包时预装依赖
 
     print(f"Install to {install_path} successfully.")

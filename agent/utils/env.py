@@ -136,9 +136,10 @@ def read_interface_version() -> str:
 def ensure_venv_and_relaunch_if_needed() -> None:
     """
     确保在 .venv 虚拟环境中运行。
-    若当前不在虚拟环境中，则自动创建 .venv 并以子进程重新启动。
+    优先使用打包产物中预装好的 .venv（install_python_env 生成）；
+    找不到时才在项目根创建新的 .venv 并安装依赖。
 
-    .venv 建在项目根目录（requirements.txt 同级），不污染系统 Python。
+    .venv 建在项目根目录，不污染系统 Python。
     触发条件：Linux 系统 或 interface.json version == "DEBUG"
     """
     # 已经在虚拟环境中，直接返回
@@ -146,7 +147,7 @@ def ensure_venv_and_relaunch_if_needed() -> None:
         logger.debug(f"已在虚拟环境中: {sys.prefix}")
         return
 
-    # 创建 .venv（若不存在）
+    # 创建 .venv（若不存在）——打包产物中已预装依赖，直接复用；开发模式下新建
     if not _VENV_DIR.exists():
         logger.info(f"创建虚拟环境: {_VENV_DIR}")
         subprocess.check_call([sys.executable, "-m", "venv", str(_VENV_DIR)])
@@ -181,8 +182,9 @@ def install_requirements() -> bool:
     依赖安装到当前 Python 环境（开发模式下即 .venv，不污染系统）。
     """
     if not _REQ_FILE.exists():
-        logger.warning(f"找不到 requirements.txt: {_REQ_FILE}")
-        return False
+        # 打包产物中依赖已预装到 .venv，无需 requirements.txt，静默跳过
+        logger.debug(f"requirements.txt 不存在，跳过安装: {_REQ_FILE}")
+        return True
 
     python = sys.executable
     req    = str(_REQ_FILE)
