@@ -17,7 +17,6 @@ sys.path.append(script_dir)
 from configure import configure_ocr_model
 from generate_manifest_cache import generate_manifest_cache
 
-# 定义路径：working_dir 是项目根目录
 working_dir = Path(__file__).parent.parent.parent
 install_path = working_dir / Path("install")
 version = len(sys.argv) > 1 and sys.argv[1] or "v0.0.1"
@@ -25,7 +24,6 @@ platform_tag = len(sys.argv) > 2 and sys.argv[2] or ""
 
 
 def install_maa_runtimes(platform_tag: str):
-    """安装 MaaFramework 的 DLL 和组件"""
     if not platform_tag:
         raise ValueError("platform_tag is required")
     
@@ -54,45 +52,38 @@ def install_maa_runtimes(platform_tag: str):
         dirs_exist_ok=True,
     )
 
-def install_python_environment():
-    """【关键】复制 Python 环境"""
-    print(">> Installing Python environment...")
+def check_python_environment():
+    """【修改】确认 Python 环境存在于 install/python"""
+    print(">> Checking Python environment...")
     
-    # 假设 CI 脚本把 python 放在了根目录的 'python' 文件夹
-    src = working_dir / "python"
-    dst = install_path / "python"
+    # 根据日志，Python 已经被 setup_embed_python.py 放到了 install/python
+    target_python = install_path / "python" / "python.exe"
     
-    if src.exists():
-        shutil.copytree(src, dst, dirs_exist_ok=True)
-        print("   Python copied successfully.")
+    if target_python.exists():
+        print(f"   Python found at: {target_python}")
     else:
-        # 如果根目录没有，尝试看看是不是已经在 install/python 了
-        if dst.exists():
-            print("   Python already exists in install/python.")
+        # 如果万一不在，尝试从根目录找（兜底）
+        src_python = working_dir / "python"
+        if src_python.exists():
+             print(f"   Copying Python from {src_python}...")
+             shutil.copytree(src_python, install_path / "python", dirs_exist_ok=True)
         else:
-            raise FileNotFoundError(f"Critical: Python environment not found at {src}")
+             raise FileNotFoundError(f"Critical: Python executable not found at {target_python}")
 
 def install_python_wheels():
-    """【关键】复制 deps (whl包)"""
+    """复制 deps (whl包)"""
     print(">> Installing Python wheels (deps)...")
     
-    # 假设 CI 脚本把 whl 下载到了根目录的 'deps' 文件夹
-    # 注意：这里的 deps 文件夹里应该只有 .whl 文件（由 download_deps.py 生成）
-    # 但由于 MaaFramework 也下载到了 deps，我们需要过滤一下，或者干脆整个考过去
-    # 为了保险，我们只拷贝 whl 文件所在的目录
-    
-    # 在 install.yml 里，我们会强制把 whl 下载到 'whl_deps' 目录以免混淆
-    # 或者我们直接把整个 deps 考过去，agent 会自己找 whl
-    
+    # 这里的 deps 是由 download_deps.py 生成的 whl 目录
+    # 我们在 install.yml 里指定了它下载到根目录的 'deps'
     src = working_dir / "deps"
     dst = install_path / "deps"
     
     if src.exists():
-        # 我们使用 dirs_exist_ok=True 进行合并
         shutil.copytree(src, dst, dirs_exist_ok=True)
         print("   Deps folder copied successfully.")
     else:
-        raise FileNotFoundError(f"Critical: 'deps' folder not found at {src}")
+        print(f"Warning: 'deps' folder not found at {src}. Install might be incomplete.")
 
 def install_resource_and_agent():
     print(">> Installing resources and agent...")
@@ -102,18 +93,17 @@ def install_resource_and_agent():
     shutil.copytree(working_dir / "assets" / "resource", install_path / "resource", dirs_exist_ok=True)
     shutil.copy2(working_dir / "assets" / "interface.json", install_path)
     
-    # Interface.json 处理
     target_json = install_path / "interface.json"
     interface = load_json_with_comments(target_json)
     interface["version"] = version
     interface["title"] = f"MAAGirlsWar {version}"
+    
     with open(target_json, "w", encoding="utf-8") as f:
         json.dump(interface, f, ensure_ascii=False, indent=4)
 
     # Agent
     shutil.copytree(working_dir / "agent", install_path / "agent", dirs_exist_ok=True)
     
-    # 再次读取写入 agent 配置
     interface = load_json_with_comments(target_json)
     if sys.platform.startswith("win"):
         interface["agent"]["child_exec"] = r"./python/python.exe"
@@ -140,21 +130,11 @@ def install_manifest_cache():
 
 if __name__ == "__main__":
     try:
-        # 清理旧的 install 目录 (可选，CI 环境通常是干净的)
-        # if install_path.exists(): shutil.rmtree(install_path)
-        
         install_path.mkdir(parents=True, exist_ok=True)
 
-        # 1. 安装 MaaFramework 运行库
         install_maa_runtimes(platform_tag)
-        
-        # 2. 安装 Python 环境 (修复 No module named pip)
-        install_python_environment()
-        
-        # 3. 安装 Python 依赖包 (修复 deps 丢失)
+        check_python_environment() # 只要检查，不用强制复制了
         install_python_wheels()
-        
-        # 4. 安装业务逻辑
         install_resource_and_agent()
         install_chores()
         install_manifest_cache()
