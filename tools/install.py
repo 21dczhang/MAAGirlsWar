@@ -214,27 +214,38 @@ def install_python_env():
     else:
         print(f"WARNING: {pth_file.name} not found, pip may not work.")
 
-    # ── 下载 get-pip.py 并安装 pip ────────────────────────────────
-    get_pip_path = python_dir / "get-pip.py"
-    print("Downloading get-pip.py ...")
-    urllib.request.urlretrieve("https://bootstrap.pypa.io/get-pip.py", get_pip_path)
-
-    embed_python = python_dir / "python.exe"
-    print("Installing pip into embedded Python ...")
-    subprocess.check_call([str(embed_python), str(get_pip_path), "--no-warn-script-location", "-q"])
-    get_pip_path.unlink()
-
-    # ── 安装 requirements.txt 依赖 ───────────────────────────────
+    # ── 安装依赖：CI 跑在 Linux 上无法执行 .exe ──────────────────
+    # 用 Linux pip download 下载适配 Windows 的 whl，直接解压到 site-packages
     req_file = working_dir / "requirements.txt"
+    site_packages = python_dir / "Lib" / "site-packages"
+    site_packages.mkdir(parents=True, exist_ok=True)
+
     if req_file.exists():
-        print("Installing dependencies into embedded Python ...")
-        embed_pip = python_dir / "Scripts" / "pip.exe"
+        print("Downloading wheels for embedded Python (via Linux pip) ...")
+        wheel_dir = install_path / "_wheels_tmp"
+        wheel_dir.mkdir(exist_ok=True)
+
+        # pip download 下载适合 Windows amd64/arm64 cp313 的 whl
+        pip_platform = "win_amd64" if embed_arch == "amd64" else "win_arm64"
         subprocess.check_call([
-            str(embed_pip), "install",
+            sys.executable, "-m", "pip", "download",
             "-r", str(req_file),
-            "--no-warn-script-location", "-q",
+            "-d", str(wheel_dir),
+            "--platform", pip_platform,
+            "--python-version", "313",
+            "--implementation", "cp",
+            "--abi", "cp313",
+            "--only-binary", ":all:",
+            "-q",
         ])
-        print("Dependencies installed.")
+
+        # whl 本质是 zip，直接解压到 site-packages
+        print("Extracting wheels into embedded site-packages ...")
+        for whl in wheel_dir.glob("*.whl"):
+            with zipfile.ZipFile(whl, "r") as zf:
+                zf.extractall(site_packages)
+        shutil.rmtree(wheel_dir)
+        print("Dependencies installed into embedded Python.")
     else:
         print("requirements.txt not found, skipping dependency install.")
 
