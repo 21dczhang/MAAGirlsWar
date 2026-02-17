@@ -182,12 +182,21 @@ def install_requirements() -> bool:
     依赖安装到当前 Python 环境（开发模式下即 .venv，不污染系统）。
     """
     if not _REQ_FILE.exists():
-        # 打包产物中依赖已预装到 .venv，无需 requirements.txt，静默跳过
+        # 打包产物中依赖已预装，无需 requirements.txt，静默跳过
         logger.debug(f"requirements.txt 不存在，跳过安装: {_REQ_FILE}")
         return True
 
     python = sys.executable
     req    = str(_REQ_FILE)
+
+    # 检测 pip 是否可用（embed Python 无 pip，依赖已由 CI 预装到 site-packages）
+    pip_check = subprocess.run(
+        [python, "-m", "pip", "--version"],
+        capture_output=True,
+    )
+    if pip_check.returncode != 0:
+        logger.debug("pip 不可用（embed Python），跳过安装，依赖应已预装")
+        return True
 
     # 策略 1：本地 whl（打包发布场景）
     if _DEPS_DIR.exists() and any(_DEPS_DIR.glob("*.whl")):
