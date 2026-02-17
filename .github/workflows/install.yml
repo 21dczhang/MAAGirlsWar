@@ -48,18 +48,15 @@ jobs:
             fi
             tag=$(date "+$tag-%y%m%d-$(git rev-parse --short HEAD)")
           fi
-
           if [ "$is_release" != "true" ] ; then
             prefix=${tag%-*-*}
             suffix=${tag#$prefix-}
             tag="$prefix-ci.$suffix"
           fi
-
           is_prerelease=false
           if [[ $tag =~ .*alpha.* || $tag =~ .*beta.* || $tag =~ .*rc.* || $tag =~ .*dev.* || $tag =~ .*-ci.* ]]; then
             is_prerelease=true
           fi
-
           echo tag=$tag | tee -a $GITHUB_OUTPUT
           echo is_release=$is_release | tee -a $GITHUB_OUTPUT
           echo is_prerelease=$is_prerelease | tee -a $GITHUB_OUTPUT
@@ -88,6 +85,7 @@ jobs:
         run: |
           echo "tag=x64" >> $GITHUB_OUTPUT
 
+      # 1. 下载 MaaFramework (它会创建 deps 文件夹)
       - name: Download MaaFramework
         uses: robinraju/release-downloader@v1
         with:
@@ -97,6 +95,7 @@ jobs:
           out-file-path: "deps"
           extract: true
 
+      # 2. 下载 GUI (MFAAvalonia)
       - name: Download MFAAvalonia
         id: download_mfa
         uses: robinraju/release-downloader@v1
@@ -113,73 +112,76 @@ jobs:
           ARCHIVE_FILE_PATH="${{ fromJson(steps.download_mfa.outputs.downloaded_files)[0] }}"
           rm -f "${ARCHIVE_FILE_PATH}"
 
-      # ----------------------------------------------------------------
-      # 关键修改 1: 下载并移动 Python 到 install/python
-      # ----------------------------------------------------------------
-      - name: Setup Embed Python
+      # 3. 设置 Python 并安装 PIP (关键步骤！)
+      - name: Setup Embed Python & Install Pip
         shell: bash
         run: |
-          # 运行 M9A 的脚本，通常会下载并解压到当前目录下的 python/ 文件夹
+          # 3.1 下载嵌入式 Python (解压到 ./python)
           python tools/ci/setup_embed_python.py
           
-          # 创建安装目录的 python 文件夹
-          mkdir -p install/python
-          
-          # 将下载好的 python 复制到 install/python
-          # 注意：如果 setup_embed_python.py 已经在 install/python 里了，cp 会报错，所以先判断
-          if [ -d "python" ]; then
-            echo "Moving python directory to install/python..."
-            cp -r python/* install/python/
+          echo ">> Enabling site-packages in python3xx._pth..."
+          # 3.2 这一步最关键：修改 _pth 文件允许 import site，否则 pip 无法安装
+          # 找到 python 目录下的 ._pth 文件 (例如 python311._pth)
+          pth_file=$(find python -name "*._pth")
+          if [ -f "$pth_file" ]; then
+             # 取消注释 'import site'
+             sed -i 's/#import site/import site/g' "$pth_file"
+             echo "Modified $pth_file to enable import site."
           else
-            echo "Warning: 'python' directory not found in root. Checking if it's already in install..."
+             echo "Warning: ._pth file not found!"
           fi
 
-      # ----------------------------------------------------------------
-      # 关键修改 2: 下载依赖 (whl) 到 install/deps
-      # ----------------------------------------------------------------
+          echo ">> Downloading and Installing Pip..."
+          # 3.3 下载 get-pip.py
+          curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          
+          # 3.4 使用嵌入式 Python 运行 get-pip.py
+          ./python/python.exe get-pip.py --no-warn-script-location
+          
+          # 3.5 验证 pip 是否安装成功
+          ./python/python.exe -m pip --version
+
+      # 4. 下载 Python 依赖 (Whl包)
       - name: Download Python dependencies
         shell: bash
         run: |
-          # 确保目标目录存在
-          mkdir -p install/deps
-          
-          # 使用刚才准备好的嵌入式 python 来下载依赖
-          # 重点：--deps-dir 指向 install/deps
-          ./install/python/python.exe tools/ci/download_deps.py --deps-dir install/deps
+          # 下载 whl 包到根目录的 deps 文件夹
+          # 这样 install.py 里的 install_python_wheels 就能找到它
+          ./python/python.exe tools/ci/download_deps.py --deps-dir deps
 
+      # 5. 下载 drop_core (如果需要)
       - name: Download drop_core module
         shell: bash
         env:
           PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
         run: |
-          ./install/python/python.exe tools/ci/download_drop_core.py --os windows --arch ${{ matrix.arch }} || echo "drop_core download skipped"
+          ./python/python.exe tools/ci/download_drop_core.py --os windows --arch ${{ matrix.arch }} || echo "drop_core download skipped"
 
-      # ----------------------------------------------------------------
-      # 运行 install.py (此时 install/ 目录下已有 python 和 deps)
-      # ----------------------------------------------------------------
-      - name: Install
+      # 6. 执行打包
+      - name: Install (Build Artifact)
         shell: bash
         run: |
           PLATFORM_TAG="win-${{ steps.platform.outputs.tag }}"
           
-          # 运行 install.py，它会填充 agent, resource, runtimes 等其他文件到 install/
-          ./install/python/python.exe ./tools/ci/install.py ${{ needs.meta.outputs.tag }} $PLATFORM_TAG
+          # 运行我们修改过的 install.py
+          # 它会把 ./python 和 ./deps 拷贝到 ./install/ 中
+          ./python/python.exe ./tools/ci/install.py ${{ needs.meta.outputs.tag }} $PLATFORM_TAG
           
-          # 如果存在 tools/registry，则复制（防止报错）
+          # 复制注册表工具(如果有)
           if [ -d "tools/registry" ]; then
             cp -rpvn tools/registry/. install/
           fi
 
-      - name: Copy MFA files to install directory
+      # 7. 复制 GUI 文件
+      - name: Copy MFA files
         shell: bash
         run: |
           if [ -d "MFA" ]; then
-            echo "Copying MFA files..."
             mkdir -p install
             cp -rpvn MFA/. install/
           fi
 
-      # 上传构件
+      # 8. 上传产物
       - uses: actions/upload-artifact@v4
         with:
           name: MAAGirlsWar-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-MFAA
@@ -216,7 +218,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: assets
-
       - name: Process and package artifacts
         run: |
           cd assets
@@ -225,7 +226,6 @@ jobs:
               (cd "$f" && zip -r "../$f.zip" .)
             fi
           done
-
       - uses: softprops/action-gh-release@v2.2.2
         with:
           files: assets/*.zip
