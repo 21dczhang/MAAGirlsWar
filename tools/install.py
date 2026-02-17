@@ -3,6 +3,8 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import urllib.request
+import zipfile
 
 try:
     import jsonc
@@ -20,7 +22,6 @@ working_dir = Path(__file__).parent.parent.resolve()
 install_path = working_dir / Path("install")
 version = len(sys.argv) > 1 and sys.argv[1] or "v0.0.1"
 
-# the first parameter is self name
 if sys.argv.__len__() < 4:
     print("Usage: python install.py <version> <os> <arch>")
     print("Example: python install.py v1.0.0 win x86_64")
@@ -29,36 +30,31 @@ if sys.argv.__len__() < 4:
 os_name = sys.argv[2]
 arch = sys.argv[3]
 
+# Python Embeddable Package 版本，只打包 Windows 产物时下载
+PYTHON_EMBED_VERSION = "3.13.1"
+
 
 def get_dotnet_platform_tag():
-    """自动检测当前平台并返回对应的dotnet平台标签"""
     if os_name == "win" and arch == "x86_64":
-        platform_tag = "win-x64"
+        return "win-x64"
     elif os_name == "win" and arch == "aarch64":
-        platform_tag = "win-arm64"
+        return "win-arm64"
     elif os_name == "macos" and arch == "x86_64":
-        platform_tag = "osx-x64"
+        return "osx-x64"
     elif os_name == "macos" and arch == "aarch64":
-        platform_tag = "osx-arm64"
+        return "osx-arm64"
     elif os_name == "linux" and arch == "x86_64":
-        platform_tag = "linux-x64"
+        return "linux-x64"
     elif os_name == "linux" and arch == "aarch64":
-        platform_tag = "linux-arm64"
+        return "linux-arm64"
     else:
         print("Unsupported OS or architecture.")
-        print("available parameters:")
-        print("version: e.g., v1.0.0")
-        print("os: [win, macos, linux, android]")
-        print("arch: [aarch64, x86_64]")
         sys.exit(1)
-
-    return platform_tag
 
 
 def install_deps():
     if not (working_dir / "deps" / "bin").exists():
         print('Please download the MaaFramework to "deps" first.')
-        print('请先下载 MaaFramework 到 "deps"。')
         sys.exit(1)
 
     if os_name == "android":
@@ -100,7 +96,6 @@ def install_deps():
 
 
 def install_resource():
-
     configure_ocr_model()
 
     shutil.copytree(
@@ -118,7 +113,7 @@ def install_resource():
 
     interface["version"] = version
 
-    # 开发模式下 agent 路径是 "./../agent/main.py"（assets/ 旁边）
+    # 开发模式下 agent 路径是 "./../agent/main.py"
     # 打包后 interface.json 和 agent/ 同级，改为 "./agent/main.py"
     if "agent" in interface and "child_args" in interface["agent"]:
         interface["agent"]["child_args"] = [
@@ -131,14 +126,8 @@ def install_resource():
 
 
 def install_chores():
-    shutil.copy2(
-        working_dir / "README.md",
-        install_path,
-    )
-    shutil.copy2(
-        working_dir / "LICENSE",
-        install_path,
-    )
+    shutil.copy2(working_dir / "README.md", install_path)
+    shutil.copy2(working_dir / "LICENSE", install_path)
 
 
 def install_agent():
@@ -149,38 +138,118 @@ def install_agent():
     )
 
 
+def install_requirements():
+    """把 requirements.txt 复制到产物根目录（供运行时按需安装参考）。"""
+    req_file = working_dir / "requirements.txt"
+    if req_file.exists():
+        shutil.copy2(req_file, install_path / "requirements.txt")
+        print("requirements.txt copied.")
+    else:
+        print("requirements.txt not found, skipping.")
+
+
 def install_python_env():
     """
-    打包时在 install/.venv 中创建虚拟环境并预装所有依赖。
-    用户拿到产物后直接运行，无需联网安装。
+    为 Windows 产物打包内置 Python 环境：
+    - 下载 Python Embeddable Package（免安装、免注册表）
+    - 解压到 install/python/
+    - 启用 pip（修改 ._pth 文件）
+    - 安装 requirements.txt 的依赖到 python/Lib/site-packages/
+    - 修改 interface.json 的 child_exec 指向内置 python
+
+    非 Windows 平台跳过（macOS/Linux 用户系统 Python 即可）。
     """
-    req_file = working_dir / "requirements.txt"
-    if not req_file.exists():
-        print("requirements.txt not found, skipping python env setup.")
-        return
+    if os_name != "win":
+        # 非 Windows 平台：创建 .venv 并装好依赖（CI Runner 是 Linux）
+        req_file = working_dir / "requirements.txt"
+        if not req_file.exists():
+            print("requirements.txt not found, skipping python env setup.")
+            return
 
-    venv_dir = install_path / ".venv"
-    print(f"Creating venv at {venv_dir} ...")
-    subprocess.check_call([sys.executable, "-m", "venv", str(venv_dir)])
+        venv_dir = install_path / ".venv"
+        print(f"Creating venv at {venv_dir} ...")
+        subprocess.check_call([sys.executable, "-m", "venv", str(venv_dir)])
 
-    # 找 venv 内的 python / pip
-    # 注意：这里用的是构建机（CI Runner）的路径规则，不是目标 os
-    # CI 统一跑在 Linux，所以始终用 bin/python3
-    if sys.platform.startswith("win"):
-        venv_python = venv_dir / "Scripts" / "python.exe"
-    else:
+        # CI Runner 是 Linux，始终用 bin/python3
         venv_python = venv_dir / "bin" / "python3"
         if not venv_python.exists():
             venv_python = venv_dir / "bin" / "python"
 
-    print("Installing dependencies into venv ...")
-    subprocess.check_call([
-        str(venv_python), "-m", "pip", "install",
-        "-r", str(req_file),
-        "--no-warn-script-location",
-        "-q",
-    ])
-    print("Python env ready.")
+        print("Installing dependencies into venv ...")
+        subprocess.check_call([
+            str(venv_python), "-m", "pip", "install",
+            "-r", str(req_file),
+            "--no-warn-script-location", "-q",
+        ])
+        print("Python venv ready.")
+        return
+
+    # ── Windows：下载并配置 Python Embeddable Package ────────────
+    embed_arch = "amd64" if arch == "x86_64" else "arm64"
+    embed_zip_name = f"python-{PYTHON_EMBED_VERSION}-embed-{embed_arch}.zip"
+    embed_url = (
+        f"https://www.python.org/ftp/python/{PYTHON_EMBED_VERSION}/{embed_zip_name}"
+    )
+    embed_zip_path = install_path / embed_zip_name
+    python_dir = install_path / "python"
+
+    print(f"Downloading Python Embeddable Package: {embed_url}")
+    urllib.request.urlretrieve(embed_url, embed_zip_path)
+
+    print(f"Extracting to {python_dir} ...")
+    python_dir.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(embed_zip_path, "r") as zf:
+        zf.extractall(python_dir)
+    embed_zip_path.unlink()  # 删除压缩包，减小体积
+
+    # ── 启用 pip：修改 ._pth 文件，添加 import site ──────────────
+    ver_nodot = "".join(PYTHON_EMBED_VERSION.split(".")[:2])  # "313"
+    pth_file = python_dir / f"python{ver_nodot}._pth"
+    if pth_file.exists():
+        content = pth_file.read_text(encoding="utf-8")
+        # 把 "#import site" 改为 "import site"
+        content = content.replace("#import site", "import site")
+        pth_file.write_text(content, encoding="utf-8")
+        print(f"Patched {pth_file.name} to enable site packages.")
+    else:
+        print(f"WARNING: {pth_file.name} not found, pip may not work.")
+
+    # ── 下载 get-pip.py 并安装 pip ────────────────────────────────
+    get_pip_path = python_dir / "get-pip.py"
+    print("Downloading get-pip.py ...")
+    urllib.request.urlretrieve("https://bootstrap.pypa.io/get-pip.py", get_pip_path)
+
+    embed_python = python_dir / "python.exe"
+    print("Installing pip into embedded Python ...")
+    subprocess.check_call([str(embed_python), str(get_pip_path), "--no-warn-script-location", "-q"])
+    get_pip_path.unlink()
+
+    # ── 安装 requirements.txt 依赖 ───────────────────────────────
+    req_file = working_dir / "requirements.txt"
+    if req_file.exists():
+        print("Installing dependencies into embedded Python ...")
+        embed_pip = python_dir / "Scripts" / "pip.exe"
+        subprocess.check_call([
+            str(embed_pip), "install",
+            "-r", str(req_file),
+            "--no-warn-script-location", "-q",
+        ])
+        print("Dependencies installed.")
+    else:
+        print("requirements.txt not found, skipping dependency install.")
+
+    # ── 修改 interface.json：child_exec 指向内置 python ──────────
+    interface_path = install_path / "interface.json"
+    with open(interface_path, "r", encoding="utf-8") as f:
+        interface = jsonc.load(f)
+
+    if "agent" in interface:
+        interface["agent"]["child_exec"] = "./python/python.exe"
+
+    with open(interface_path, "w", encoding="utf-8") as f:
+        jsonc.dump(interface, f, ensure_ascii=False, indent=4)
+
+    print(f"Python Embeddable Package ready at {python_dir}")
 
 
 if __name__ == "__main__":
@@ -188,6 +257,7 @@ if __name__ == "__main__":
     install_resource()
     install_chores()
     install_agent()
-    install_python_env()   # ← 新增：打包时预装依赖
+    install_requirements()
+    install_python_env()
 
     print(f"Install to {install_path} successfully.")

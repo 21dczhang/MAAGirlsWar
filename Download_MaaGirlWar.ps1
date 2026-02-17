@@ -33,6 +33,15 @@ try {
     
     Write-Host "Download completed, saved to: $DownloadPath"
     
+    # Load the required assembly for ZIP operations
+    try {
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+    }
+    catch {
+        Write-Error "Failed to load System.IO.Compression.FileSystem assembly: $($_.Exception.Message)"
+        exit 1
+    }
+    
     # Verify the downloaded file is a valid zip
     try {
         $ZipArchive = [System.IO.Compression.ZipFile]::OpenRead($DownloadPath)
@@ -63,7 +72,6 @@ try {
     New-Item -ItemType Directory -Path $TempExtractPath -Force
     
     # Extract file using .NET compression methods to temporary location
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
     [System.IO.Compression.ZipFile]::ExtractToDirectory($DownloadPath, $TempExtractPath)
     
     # Find the actual extracted content (there might be a subfolder inside the zip)
