@@ -7,11 +7,10 @@ import os
 import re
 
 def load_json_with_comments(path):
+    # 接收路径，内部自己打开文件
     with open(path, "r", encoding="utf-8") as f:
         content = f.read()
-    # 使用正则表达式去除 // 开头的单行注释
-    # 注意：这个简单的正则假设 // 不会出现在字符串内部（例如 url）
-    # 如果你的 json 里有 https://... 这种 url，用下面这个更严谨的正则：
+    # 去除注释
     content = re.sub(r'(?<!:)//.*', '', content) 
     return json.loads(content)
 
@@ -77,9 +76,12 @@ def install_resource():
         install_path,
     )
 
-    with open(install_path / "interface.json", "r", encoding="utf-8") as f:
-        # interface = json.load(f)
-        interface = load_json_with_comments(f)
+    # ---------------- 改动在这里 ----------------
+    # 之前报错是因为传入了 f (文件对象)，或者 f 未定义
+    # 现在直接传入路径 (install_path / "interface.json")
+    target_json_path = install_path / "interface.json"
+    interface = load_json_with_comments(target_json_path)
+    # -------------------------------------------
 
     interface["version"] = version
     interface["title"] = f"MAAGirlsWar {version}"
@@ -90,10 +92,11 @@ def install_resource():
 
 def install_chores():
     for file in ["README.md", "LICENSE", "CONTACT", "requirements.txt"]:
-        shutil.copy2(
-            working_dir / file,
-            install_path,
-        )
+        if (working_dir / file).exists():
+            shutil.copy2(
+                working_dir / file,
+                install_path,
+            )
     # shutil.copytree(
     #     working_dir / "docs",
     #     install_path / "docs",
@@ -109,9 +112,11 @@ def install_agent():
         dirs_exist_ok=True,
     )
 
-    with open(install_path / "interface.json", "r", encoding="utf-8") as f:
-        # interface = json.load(f)
-        interface = load_json_with_comments(f)
+    # ---------------- 改动在这里 ----------------
+    # 同样直接传入路径
+    target_json_path = install_path / "interface.json"
+    interface = load_json_with_comments(target_json_path)
+    # -------------------------------------------
 
     if sys.platform.startswith("win"):
         interface["agent"]["child_exec"] = r"./python/python.exe"
