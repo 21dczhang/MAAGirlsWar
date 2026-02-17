@@ -37,17 +37,13 @@ jobs:
           fetch-depth: 0
       - id: set_tag
         run: |
-          # 检查标签格式
           if [[ ${{ github.ref }} =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*)?$ ]]; then
             is_release=true
             tag=${GITHUB_REF#refs/tags/}
-            echo "Release tag format is valid: $tag"
           else
             is_release=false
-            # 获取最新的发布标签
             tag=$(curl -sX GET "https://api.github.com/repos/${{ github.repository }}/releases/latest" --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' | awk '/tag_name/{print $4}' FS='["]')
             if [[ ! $tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
-              echo "No valid release tag found, using v0.0.0"
               tag="v0.0.0"
             fi
             tag=$(date "+$tag-%y%m%d-$(git rev-parse --short HEAD)")
@@ -59,11 +55,9 @@ jobs:
             tag="$prefix-ci.$suffix"
           fi
 
-          # 检查是否为预发布版本
           is_prerelease=false
           if [[ $tag =~ .*alpha.* || $tag =~ .*beta.* || $tag =~ .*rc.* || $tag =~ .*dev.* || $tag =~ .*-ci.* ]]; then
             is_prerelease=true
-            echo "This is a pre-release version"
           fi
 
           echo tag=$tag | tee -a $GITHUB_OUTPUT
@@ -81,10 +75,6 @@ jobs:
         include:
           - arch: x86_64
             runner: windows-latest
-          # 如果不需要 arm64 可保持注释
-          # - arch: aarch64
-          #   runner: windows-11-arm
-      fail-fast: false
     runs-on: ${{ matrix.runner }}
 
     steps:
@@ -96,11 +86,7 @@ jobs:
         id: platform
         shell: bash
         run: |
-          if [ "${{ matrix.arch }}" = "x86_64" ]; then
-            echo "tag=x64" >> $GITHUB_OUTPUT
-          else
-            echo "tag=arm64" >> $GITHUB_OUTPUT
-          fi
+          echo "tag=x64" >> $GITHUB_OUTPUT
 
       - name: Download MaaFramework
         uses: robinraju/release-downloader@v1
@@ -121,21 +107,44 @@ jobs:
           out-file-path: "MFA"
           extract: true
 
-      - name: Clean up MFAAvalonia archive on Windows
+      - name: Clean up MFAAvalonia archive
         shell: bash
         run: |
           ARCHIVE_FILE_PATH="${{ fromJson(steps.download_mfa.outputs.downloaded_files)[0] }}"
           rm -f "${ARCHIVE_FILE_PATH}"
-          echo "Archive cleanup command executed for MFAAvalonia on Windows."
 
-      - name: Setup Embed Python on Windows
+      # ----------------------------------------------------------------
+      # 关键修改 1: 下载并移动 Python 到 install/python
+      # ----------------------------------------------------------------
+      - name: Setup Embed Python
         shell: bash
         run: |
+          # 运行 M9A 的脚本，通常会下载并解压到当前目录下的 python/ 文件夹
           python tools/ci/setup_embed_python.py
           
+          # 创建安装目录的 python 文件夹
+          mkdir -p install/python
+          
+          # 将下载好的 python 复制到 install/python
+          # 注意：如果 setup_embed_python.py 已经在 install/python 里了，cp 会报错，所以先判断
+          if [ -d "python" ]; then
+            echo "Moving python directory to install/python..."
+            cp -r python/* install/python/
+          else
+            echo "Warning: 'python' directory not found in root. Checking if it's already in install..."
+          fi
+
+      # ----------------------------------------------------------------
+      # 关键修改 2: 下载依赖 (whl) 到 install/deps
+      # ----------------------------------------------------------------
       - name: Download Python dependencies
         shell: bash
         run: |
+          # 确保目标目录存在
+          mkdir -p install/deps
+          
+          # 使用刚才准备好的嵌入式 python 来下载依赖
+          # 重点：--deps-dir 指向 install/deps
           ./install/python/python.exe tools/ci/download_deps.py --deps-dir install/deps
 
       - name: Download drop_core module
@@ -145,29 +154,32 @@ jobs:
         run: |
           ./install/python/python.exe tools/ci/download_drop_core.py --os windows --arch ${{ matrix.arch }} || echo "drop_core download skipped"
 
-      - name: Install (GUI Version)
+      # ----------------------------------------------------------------
+      # 运行 install.py (此时 install/ 目录下已有 python 和 deps)
+      # ----------------------------------------------------------------
+      - name: Install
         shell: bash
         run: |
           PLATFORM_TAG="win-${{ steps.platform.outputs.tag }}"
-          # 运行 install.py 生成主程序
+          
+          # 运行 install.py，它会填充 agent, resource, runtimes 等其他文件到 install/
           ./install/python/python.exe ./tools/ci/install.py ${{ needs.meta.outputs.tag }} $PLATFORM_TAG
           
-          # 如果有 registry 文件夹才复制
+          # 如果存在 tools/registry，则复制（防止报错）
           if [ -d "tools/registry" ]; then
             cp -rpvn tools/registry/. install/
           fi
 
-      - name: Copy MFA files to main version
+      - name: Copy MFA files to install directory
         shell: bash
         run: |
           if [ -d "MFA" ]; then
-            echo "Copying MFA files to install directory..."
+            echo "Copying MFA files..."
             mkdir -p install
             cp -rpvn MFA/. install/
-          else
-            echo "MFA directory not found, skipping copy."
           fi
 
+      # 上传构件
       - uses: actions/upload-artifact@v4
         with:
           name: MAAGirlsWar-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-MFAA
@@ -184,7 +196,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Generate a changelog
         uses: orhun/git-cliff-action@v4
         id: git-cliff
@@ -198,7 +209,6 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
 
   release:
-    # 仅在打 Release Tag 时运行
     if: ${{ needs.meta.outputs.is_release == 'true' }}
     needs: [meta, windows, changelog]
     runs-on: ubuntu-latest
@@ -212,7 +222,6 @@ jobs:
           cd assets
           for f in *; do
             if [[ $f == *"win"* ]]; then
-              # 进入文件夹并打包为 zip
               (cd "$f" && zip -r "../$f.zip" .)
             fi
           done
