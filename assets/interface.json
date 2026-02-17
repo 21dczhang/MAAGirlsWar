@@ -1,15 +1,9 @@
 {
-    // 本文件主要定义了通用 UI 的行为和显示内容
-    // 可参考文档和示例添加更多您需要的功能
-    // 文档：https://maafw.xyz/docs/3.3-ProjectInterfaceV2
-    // 示例：https://github.com/MaaXYZ/MaaFramework/blob/main/sample/interface.json
     "interface_version": 2,
     "name": "MaaGirlsWar",
     "description": "少女战争 MAA Girls War!",
     "license": "MIT",
-    // 填写项目地址和版本号可实现自动更新功能
     "github": "https://github.com/21dczhang/MAAGirlsWar",
-    // "version": "0.0.1",
     "version": "DEBUG",
     "controller": [
         {
