@@ -141,6 +141,15 @@ jobs:
           ARCHIVE_FILE_PATH="${{ fromJson(steps.download_mxu.outputs.downloaded_files)[0] }}"
           rm -f "${ARCHIVE_FILE_PATH}"
           echo "Archive cleanup command executed for MXU on Windows."
+      - name: Debug Directory Structure
+        shell: bash
+        run: |
+          echo "=== Checking MFA Directory ==="
+          ls -R MFA
+          echo "=== Checking MXU Directory ==="
+          ls -R MXU
+          echo "=== Checking deps Directory ==="
+          ls -R deps
 
       - name: Setup Embed Python on Windows
         shell: bash
