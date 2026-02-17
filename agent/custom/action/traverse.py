@@ -28,7 +28,7 @@ from maa.custom_action import CustomAction
 from maa.pipeline import JTemplateMatch, JRecognitionType, JOCR
 
 
-@AgentServer.custom_action("TraverseAndExecute")
+
 class TraverseAndExecute(CustomAction):
     """
     通用多目标遍历执行器

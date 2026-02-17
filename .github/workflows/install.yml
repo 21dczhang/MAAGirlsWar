@@ -18,8 +18,8 @@ on:
   workflow_dispatch:
 
 env:
-  MAA_FRAMEWORK_VERSION: "v5.3.3"
-  MFAA_VERSION: "v2.5.6"
+  MAA_FRAMEWORK_VERSION: "v5.6.0"
+  MFAA_VERSION: "v2.7.0"
 
 permissions:
   contents: write
@@ -132,7 +132,7 @@ jobs:
           choco install imagemagick -y
 
           # 转换 PNG 到 ICO
-          magick convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 M2gyro.ico
+          magick convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 MAAGirlsWar.ico
 
       - name: Modify MFAAvalonia exe icon
         if: matrix.arch == 'x86_64'
@@ -142,7 +142,7 @@ jobs:
           curl -L https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe -o rcedit.exe
 
           # 修改 exe 图标
-          # ./rcedit.exe "MFA/MFAAvalonia.exe" --set-icon "M2gyro.ico"
+          # ./rcedit.exe "MFA/MFAAvalonia.exe" --set-icon "MAAGirlsWar.ico"
 
           echo "MFAAvalonia icon modified successfully"
 
@@ -202,19 +202,19 @@ jobs:
           mkdir -p install/assets
 
           # 如果有自定义图标，复制并重命名为 logo.ico
-          if [ -f "M2gyro.ico" ]; then
-            cp M2gyro.ico install/assets/logo.ico
+          if [ -f "MAAGirlsWar.ico" ]; then
+            cp MAAGirlsWar.ico install/assets/logo.ico
             echo "Copied custom icon to assets/logo.ico"
           fi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: M2gyro-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Full
+          name: MAAGirlsWar-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Full
           path: "install"
 
       # - uses: actions/upload-artifact@v4
       #   with:
-      #     name: M2gyro-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Lite
+      #     name: MAAGirlsWar-win-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Lite
       #     path: "install-cli"
 
   linux:
@@ -273,7 +273,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y imagemagick
 
           # 转换 PNG 到 ICO
-          convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 M2gyro.ico
+          convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 MAAGirlsWar.ico
 
       - name: Download Python dependencies
         shell: bash
@@ -328,19 +328,19 @@ jobs:
           mkdir -p install/assets
 
           # 如果有自定义图标，复制并重命名为 logo.ico
-          if [ -f "M2gyro.ico" ]; then
-            cp M2gyro.ico install/assets/logo.ico
+          if [ -f "MAAGirlsWar.ico" ]; then
+            cp MAAGirlsWar.ico install/assets/logo.ico
             echo "Copied custom icon to assets/logo.ico"
           fi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: M2gyro-linux-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Full
+          name: MAAGirlsWar-linux-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Full
           path: "install"
 
       # - uses: actions/upload-artifact@v4
       #   with:
-      #     name: M2gyro-linux-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Lite
+      #     name: MAAGirlsWar-linux-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Lite
       #     path: "install-cli"
 
   macos:
@@ -402,7 +402,7 @@ jobs:
           brew install imagemagick
 
           # 转换 PNG 到 ICO
-          magick convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 M2gyro.ico
+          magick convert assets/logo.png -define icon:auto-resize=256,128,64,48,32,24,16 MAAGirlsWar.ico
 
       - name: Setup Embed Python on macOS
         shell: bash
@@ -467,19 +467,19 @@ jobs:
           mkdir -p install/assets
 
           # 如果有自定义图标，复制并重命名为 logo.ico
-          if [ -f "M2gyro.ico" ]; then
-            cp M2gyro.ico install/assets/logo.ico
+          if [ -f "MAAGirlsWar.ico" ]; then
+            cp MAAGirlsWar.ico install/assets/logo.ico
             echo "Copied custom icon to assets/logo.ico"
           fi
 
       - uses: actions/upload-artifact@v4
         with:
-          name: M2gyro-macos-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Full
+          name: MAAGirlsWar-macos-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Full
           path: "install"
 
       # - uses: actions/upload-artifact@v4
       #   with:
-      #     name: M2gyro-macos-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Lite
+      #     name: MAAGirlsWar-macos-${{ matrix.arch }}-${{ needs.meta.outputs.tag }}-Lite
       #     path: "install-cli"
 
   changelog:
