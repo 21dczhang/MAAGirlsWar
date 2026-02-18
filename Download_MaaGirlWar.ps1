@@ -13,7 +13,9 @@ try {
     $ReleaseInfo = Invoke-RestMethod -Uri $RepoUrl -Method Get
     
     # Find asset file matching the correct pattern (MaaGirlsWar-win-x64.zip)
-    $Asset = $ReleaseInfo.assets | Where-Object { $_.name -match "^MaaGirlsWar-win-x64\.zip$" }
+    $Asset = $ReleaseInfo.assets | Where-Object {
+    $_.name -like "MAAGirlsWar-win-x86_64-*-Full.zip"
+}
     
     if ($null -eq $Asset) {
         Write-Error "No matching archive file found. Available assets:"
