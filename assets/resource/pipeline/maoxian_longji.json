@@ -1,3 +1,6 @@
 {
-    "MaoXian_MaoXian_Start_LongJiTiaoZhan": {}
+    "MaoXian_MaoXian_Start_LongJiTiaoZhan": {
+        "max_hit": 1,
+        "focus": "冒险 - 龙姬挑战，默认选最高等级6次"
+    }
 }

@@ -9,10 +9,10 @@ from maa.agent.agent_server import AgentServer
 from custom.action.Count import Count
 from custom.action.ScreenShot import ScreenShot,CheckResolution
 from custom.action.Node import DisableNode,NodeOverride
-from custom.action.Traverse import TraverseAndExecute
+from custom.action.Traverse import TraverseAndClick
 
-@AgentServer.custom_action("TraverseAndExecute")
-class Agent_TraverseAndExecute(TraverseAndExecute):
+@AgentServer.custom_action("TraverseAndClick")
+class Agent_TraverseAndClick(TraverseAndClick):
     pass
 
 @AgentServer.custom_action("Count")

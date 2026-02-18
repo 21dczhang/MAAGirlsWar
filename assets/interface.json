@@ -59,11 +59,11 @@
         },
         {
             "name": "测试任务",
-            "entry": "开始遍历"
+            "entry": "MianFeiChouKa_Start"
         },
         {
             "name": "测试任务2",
-            "entry": "Daily_Task_Daily_Task_Start_RiHuoYueJiangLi_Start"
+            "entry": "MianFeiChouKa_MianFeiChouKa_WuShuang_And_LiaoLi_Switch"
         }
     ],
     "option": {}

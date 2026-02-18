@@ -1,6 +1,82 @@
+"""
+Custom Action: TraverseAndClick
+================================
+功能：
+  1. 用模板匹配或 OCR 识别当前屏幕，收集所有 score > threshold 的结果
+  2. 若无匹配项，执行 task_after_round 后继续下一轮
+  3. 遍历所有匹配结果：点击中心 → 执行 task_each
+  4. 遍历完成后重新截图检查终止条件，满足则退出
+  5. 不满足终止条件则执行 task_after_round，进入下一轮
+  6. 达到 max_rounds 上限时强制退出
+
+Pipeline JSON 调用示例：
+─────────────────────────────────────────────────────────────
+{
+    "StartTraverse": {
+        "action": "Custom",
+        "custom_action": "TraverseAndClick",
+        "custom_action_param": {
+
+            // ── 识别方式 ──────────────────────────────────────
+            // "method": "template" | "ocr"
+            "method": "template",
+
+            // [template] 待匹配的模板图片文件名（resource 目录下的路径）
+            "template": "items/target_item.png",
+
+            // [ocr] 待匹配的文字列表，命中其中任意一项即算匹配
+            // "ocr_text": ["词A", "词B"],
+
+            // 匹配分数阈值（0~1），高于此值才纳入遍历
+            "threshold": 0.85,
+
+            // 主识别 ROI，格式 [x, y, w, h]，不传则默认全屏
+            // "roi": [100, 200, 800, 600],
+
+            // ── 终止条件 ──────────────────────────────────────
+            // "stop_method": "template" | "ocr"
+            "stop_method": "template",
+
+            // [template] 终止条件：识别到该图片则停止
+            "stop_template": "ui/end_screen.png",
+
+            // [ocr] 终止条件：OCR 识别到包含以下任一字符串则停止
+            // "stop_ocr_text": ["结束", "完成"],
+
+            // 终止条件识别 ROI，格式 [x, y, w, h]，不传则默认全屏
+            // "stop_roi": [0, 0, 400, 100],
+
+            // ── 任务配置 ──────────────────────────────────────
+            // 点击每个匹配项后执行的任务节点名
+            "task_each": "TaskA",
+
+            // 每轮遍历全部结束后执行的任务节点名
+            "task_after_round": "TaskC",
+
+            // ── 可选配置 ──────────────────────────────────────
+            // 两次识别之间的等待时间（秒），默认 0.5
+            "round_delay": 0.5,
+
+            // 每次点击后、执行 task_each 前的等待时间（秒），默认 0.3
+            "click_delay": 0.3,
+
+            // 最大循环轮数，防止死循环，默认 50，设为 -1 表示不限制
+            "max_rounds": 50
+        }
+    }
+}
+─────────────────────────────────────────────────────────────
+"""
+
 import json
+import time
 import logging
 import sys
+from typing import Optional, Union
+
+from maa.agent.agent_server import AgentServer
+from maa.custom_action import CustomAction
+from maa.context import Context
 
 
 def _setup_logger() -> logging.Logger:
@@ -22,33 +98,8 @@ def _setup_logger() -> logging.Logger:
 logger = _setup_logger()
 
 
-from maa.agent.agent_server import AgentServer
-from maa.context import Context
-from maa.custom_action import CustomAction
-from maa.pipeline import JTemplateMatch, JRecognitionType, JOCR
-
-
-
-class TraverseAndExecute(CustomAction):
-    """
-    通用多目标遍历执行器
-
-    custom_action_param 示例：
-    {
-        "template":         "target.png",
-        "threshold":        0.8,
-        "roi":              [0, 200, 1080, 700],
-        "action_sequence":  ["TaskA", "TaskB"],
-        "after_all":        "TaskC",
-        "stop_condition": {
-            "type":   "ocr",
-            "target": "料理屋",
-            "roi":    [0, 0, 500, 100]
-        }
-    }
-    """
-
-    _states: dict = {}  # node_name → {"matches": [...], "index": int}
+@AgentServer.custom_action("TraverseAndClick")
+class TraverseAndClick(CustomAction):
 
     def run(
         self,
@@ -56,191 +107,261 @@ class TraverseAndExecute(CustomAction):
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
 
-        # ── 1. 解析参数 ────────────────────────────────────────────
-        node_name: str = argv.node_name
-        logger.info(f"[TraverseAndExecute] 节点开始执行: {node_name}")
-        
+        # ── 解析参数 ────────────────────────────────────────────
         try:
-            param: dict = json.loads(argv.custom_action_param) if argv.custom_action_param else {}
-        except json.JSONDecodeError as e:
-            logger.error(f"[TraverseAndExecute] 参数解析失败: {e}")
-            return CustomAction.RunResult(success=False)
-        
-        template: str         = param.get("template", "")
-        threshold: float      = param.get("threshold", 0.8)
-        roi                   = param.get("roi")
-        action_sequence: list = param.get("action_sequence", [])
-        after_all: str        = param.get("after_all", "")
-        stop_cond             = param.get("stop_condition")
-
-        logger.info(f"[TraverseAndExecute] 参数: template={template}, threshold={threshold}, roi={roi}")
-        logger.info(f"[TraverseAndExecute] 动作序列: {action_sequence}, after_all={after_all}")
-
-        # ── 2. 截图（本轮复用）────────────────────────────────────
-        try:
-            image = context.tasker.controller.post_screencap().wait().get()
-            logger.info(f"[TraverseAndExecute] 截图成功")
-        except Exception as e:
-            logger.error(f"[TraverseAndExecute] 截图失败: {e}")
+            param: dict = json.loads(argv.custom_action_param)
+        except (json.JSONDecodeError, TypeError) as e:
+            logger.error(f"[TraverseAndClick] 参数解析失败: {e}")
             return CustomAction.RunResult(success=False)
 
-        # ── 3. 检查终止条件 ────────────────────────────────────────
-        if stop_cond:
-            logger.info(f"[TraverseAndExecute] 检查终止条件: {stop_cond}")
-            if self._check_stop(context, image, stop_cond):
-                logger.info(f"[TraverseAndExecute] 满足终止条件，清理状态并退出")
-                self._states.pop(node_name, None)
-                context.override_pipeline({node_name: {"next": []}})
-                return CustomAction.RunResult(success=True)
-            else:
-                logger.info(f"[TraverseAndExecute] 未满足终止条件，继续执行")
+        method: str           = param.get("method", "template")          # "template" | "ocr"
+        template: str         = param.get("template", "")                # 模板图片路径
+        ocr_text: list        = param.get("ocr_text", [])                # OCR 目标词列表
+        threshold: float      = float(param.get("threshold", 0.8))       # 匹配阈值
+        roi: list | None      = param.get("roi", None)                   # 主识别 ROI [x,y,w,h]，None 表示全屏
 
-        # ── 4. 新一轮开始：重新识别所有目标 ───────────────────────
-        state = self._states.get(node_name)
-        if state is None or state["index"] >= len(state["matches"]):
-            logger.info(f"[TraverseAndExecute] 开始新一轮目标识别 (state={state is not None})")
-            matches = self._find_all(context, image, template, threshold, roi)
-            logger.info(f"[TraverseAndExecute] 识别到 {len(matches)} 个目标")
-            
-            self._states[node_name] = {"matches": matches, "index": 0}
-            state = self._states[node_name]
+        stop_method: str      = param.get("stop_method", "template")     # 终止条件识别方式
+        stop_template: str    = param.get("stop_template", "")           # 终止条件模板图片
+        stop_ocr_text: list   = param.get("stop_ocr_text", [])           # 终止条件 OCR 词列表
+        stop_roi: list | None = param.get("stop_roi", None)              # 终止条件 ROI [x,y,w,h]，None 表示全屏
+
+        task_each: str        = param.get("task_each", "")               # 每项匹配后执行的任务
+        task_after_round: str = param.get("task_after_round", "")        # 每轮结束后执行的任务
+
+        round_delay: float    = float(param.get("round_delay", 0.5))     # 两轮之间等待（秒）
+        click_delay: float    = float(param.get("click_delay", 0.3))     # 点击后等待（秒）
+        max_rounds: int       = int(param.get("max_rounds", 50))         # 最大轮数
+
+        # ── 参数校验 ────────────────────────────────────────────
+        if method == "template" and not template:
+            logger.error("[TraverseAndClick] method=template 时必须提供 template 参数")
+            return CustomAction.RunResult(success=False)
+
+        if method == "ocr" and not ocr_text:
+            logger.error("[TraverseAndClick] method=ocr 时必须提供 ocr_text 参数")
+            return CustomAction.RunResult(success=False)
+
+        if not task_each:
+            logger.error("[TraverseAndClick] 必须提供 task_each 参数")
+            return CustomAction.RunResult(success=False)
+
+        # ── 主循环 ──────────────────────────────────────────────
+        round_count = 0
+
+        while max_rounds < 0 or round_count < max_rounds:
+            round_count += 1
+            logger.info(f"[TraverseAndClick] ── 第 {round_count} 轮 ──")
+
+            # 1. 截图
+            img = context.tasker.controller.post_screencap().wait().get()
+
+            # 2. 识别目标，获取所有匹配项
+            matches = self._recognize_all(context, img, method, template, ocr_text, threshold, roi)
 
             if not matches:
-                logger.warning(f"[TraverseAndExecute] 未找到任何匹配目标，结束遍历")
-                self._states.pop(node_name, None)
-                context.override_pipeline({node_name: {"next": []}})
-                return CustomAction.RunResult(success=True)
+                logger.info("[TraverseAndClick] 本轮无匹配项，执行 task_after_round 后继续")
+                if task_after_round:
+                    context.run_task(task_after_round)
+                if round_delay > 0:
+                    time.sleep(round_delay)
+                continue
 
-        # ── 5. 当前轮遍历完：执行 after_all，开启下一轮 ───────────
-        if state["index"] >= len(state["matches"]):
-            logger.info(f"[TraverseAndExecute] 当前轮遍历完成 (共 {len(state['matches'])} 个目标)")
-            state["index"] = 0
-            next_tasks = ([after_all] if after_all else []) + [node_name]
-            logger.info(f"[TraverseAndExecute] 下一轮任务序列: {next_tasks}")
-            context.override_pipeline({node_name: {"next": next_tasks}})
-            return CustomAction.RunResult(success=True)
+            logger.info(f"[TraverseAndClick] 本轮匹配到 {len(matches)} 个目标")
 
-        # ── 6. 点击当前目标 ────────────────────────────────────────
-        hit = state["matches"][state["index"]]
-        x, y, w, h = hit.box
-        cx, cy = x + w // 2, y + h // 2
-        logger.info(f"[TraverseAndExecute] 点击目标 #{state['index']+1}/{len(state['matches'])} @ ({cx}, {cy}) [box: {x},{y},{w},{h}]")
-        
-        try:
-            context.tasker.controller.post_click(cx, cy).wait()
-        except Exception as e:
-            logger.error(f"[TraverseAndExecute] 点击失败: {e}")
-            return CustomAction.RunResult(success=False)
-        
-        state["index"] += 1
+            # 3. 遍历每个匹配项
+            for idx, (cx, cy) in enumerate(matches):
+                logger.info(f"[TraverseAndClick]   [{idx + 1}/{len(matches)}] 点击 ({cx}, {cy})")
 
-        # ── 7. 执行动作序列，结束后回到自身继续下一个 ──────────────
-        next_pipeline = action_sequence + [node_name]
-        logger.info(f"[TraverseAndExecute] 设置后续任务序列: {next_pipeline}")
-        context.override_pipeline({
-            node_name: {"next": next_pipeline}
-        })
-        logger.info(f"[TraverseAndExecute] 节点执行完成")
+                # 点击匹配区域中心
+                context.tasker.controller.post_click(cx, cy).wait()
+
+                if click_delay > 0:
+                    time.sleep(click_delay)
+
+                # 执行 task_each
+                if task_each:
+                    context.run_task(task_each)
+
+            # 4. 遍历完毕后，重新截图检查终止条件
+            img = context.tasker.controller.post_screencap().wait().get()
+            if self._check_stop(context, img, stop_method, stop_template, stop_ocr_text, stop_roi):
+                logger.info("[TraverseAndClick] 终止条件触发，退出循环")
+                break
+
+            # 5. 不满足终止条件，执行 task_after_round，然后继续下一轮
+            if task_after_round:
+                logger.info(f"[TraverseAndClick] 本轮结束，执行 {task_after_round}")
+                context.run_task(task_after_round)
+
+            # 6. 等待后进入下一轮
+            if round_delay > 0:
+                time.sleep(round_delay)
+
+        logger.info(f"[TraverseAndClick] 共执行 {round_count} 轮，结束")
         return CustomAction.RunResult(success=True)
 
-    # ── 内部方法 ──────────────────────────────────────────────────
+    # ────────────────────────────────────────────────────────────
+    # 内部方法
+    # ────────────────────────────────────────────────────────────
 
-    def _find_all(
+    def _recognize_all(
         self,
         context: Context,
-        image,
+        img,
+        method: str,
+        template: str,
+        ocr_text: list,
+        threshold: float,
+        roi: list | None = None,
+    ) -> list[tuple[int, int]]:
+        """
+        返回所有命中的目标中心坐标列表 [(cx, cy), ...]，按 score 降序。
+        roi 为 [x, y, w, h]，None 表示全屏。
+        """
+        centers = []
+
+        if method == "template":
+            centers = self._match_template_all(context, img, template, threshold, roi)
+        elif method == "ocr":
+            centers = self._match_ocr_all(context, img, ocr_text, threshold, roi)
+        else:
+            logger.warning(f"[TraverseAndClick] 未知识别方式: {method}")
+
+        return centers
+
+    def _match_template_all(
+        self,
+        context: Context,
+        img,
         template: str,
         threshold: float,
-        roi,
-    ) -> list:
-        """调用框架内置 TemplateMatch 获取所有匹配结果。"""
-        logger.info(f"[TraverseAndExecute._find_all] 开始模板匹配: template={template}, threshold={threshold}, roi={roi}")
-        
-        # roi 格式：[x, y, w, h] 或 None
-        # JTemplateMatch.roi 接受 tuple (x, y, w, h)，默认 (0,0,0,0) 表示全屏
-        reco_param = JTemplateMatch(
-            template=[template],
-            threshold=[threshold],
-            order_by="Score",
-            roi=tuple(roi) if roi else (0, 0, 0, 0),
-        )
+        roi: list | None = None,
+    ) -> list[tuple[int, int]]:
+        """
+        使用 MaaFramework 的 TemplateMatch 识别节点收集所有结果。
+        通过临时注入一个 pipeline 节点来触发识别，读取 all_results。
+        """
+        tmp_node = "__TraverseAndClick_template_tmp__"
 
-        try:
-            detail = context.run_recognition_direct(
-                JRecognitionType.TemplateMatch,
-                reco_param,
-                image,
-            )
-        except Exception as e:
-            logger.error(f"[TraverseAndExecute._find_all] 模板匹配异常: {e}")
+        node_cfg: dict = {
+            "recognition": "TemplateMatch",
+            "template": template,
+            "threshold": threshold,
+            "order_by": "Score",
+            "action": "DoNothing",
+        }
+        if roi is not None:
+            node_cfg["roi"] = roi
+
+        context.override_pipeline({tmp_node: node_cfg})
+
+        reco_detail = context.run_recognition(tmp_node, img)
+        return self._extract_centers_from_detail(reco_detail, threshold, kind="template")
+
+    def _match_ocr_all(
+        self,
+        context: Context,
+        img,
+        ocr_text: list,
+        threshold: float,
+        roi: list | None = None,
+    ) -> list[tuple[int, int]]:
+        """
+        使用 OCR 识别并过滤包含目标文字的结果。
+        """
+        tmp_node = "__TraverseAndClick_ocr_tmp__"
+
+        node_cfg: dict = {
+            "recognition": "OCR",
+            "expected": ocr_text,
+            "threshold": threshold,
+            "order_by": "Score",
+            "action": "DoNothing",
+        }
+        if roi is not None:
+            node_cfg["roi"] = roi
+
+        context.override_pipeline({tmp_node: node_cfg})
+
+        reco_detail = context.run_recognition(tmp_node, img)
+        return self._extract_centers_from_detail(reco_detail, threshold, kind="ocr")
+
+    def _extract_centers_from_detail(
+        self,
+        reco_detail,
+        threshold: float,
+        kind: str,
+    ) -> list[tuple[int, int]]:
+        """
+        从 reco_detail.all_results 中提取 score >= threshold 的结果中心坐标。
+        """
+        if reco_detail is None:
             return []
 
-        if not detail or not detail.hit:
-            logger.info(f"[TraverseAndExecute._find_all] 未匹配到任何目标")
-            return []
+        centers = []
+        all_results = getattr(reco_detail, "all_results", [])
 
-        result_count = len(detail.all_results) if detail.all_results else 0
-        logger.info(f"[TraverseAndExecute._find_all] 匹配成功，共 {result_count} 个结果")
-        
-        # 打印每个匹配结果的详细信息（debug 级别可用）
-        if detail.all_results:
-            for i, res in enumerate(detail.all_results[:5]):  # 只打印前5个避免日志过多
-                logger.info(f"[TraverseAndExecute._find_all]   结果#{i+1}: box={res.box}, score={getattr(res, 'score', 'N/A')}")
-            if len(detail.all_results) > 5:
-                logger.info(f"[TraverseAndExecute._find_all]   ... 还有 {len(detail.all_results) - 5} 个结果")
+        for result in all_results:
+            score = getattr(result, "score", 0.0)
+            if score < threshold:
+                continue
 
-        return detail.all_results
+            box = getattr(result, "box", None)  # [x, y, w, h]
+            if box is None or len(box) < 4:
+                continue
+
+            cx = box[0] + box[2] // 2
+            cy = box[1] + box[3] // 2
+            logger.debug(f"[TraverseAndClick] {kind} 命中: box={box}, score={score:.3f}, center=({cx},{cy})")
+            centers.append((cx, cy))
+
+        return centers
 
     def _check_stop(
         self,
         context: Context,
-        image,
-        condition: dict,
+        img,
+        stop_method: str,
+        stop_template: str,
+        stop_ocr_text: list,
+        stop_roi: list | None = None,
     ) -> bool:
-        """检查终止条件，支持 ocr 和 template 两种类型。"""
-        ctype  = condition.get("type", "ocr")
-        target = condition.get("target", "")
-        roi    = condition.get("roi")
-        roi_t  = tuple(roi) if roi else (0, 0, 0, 0)
-
-        logger.info(f"[TraverseAndExecute._check_stop] 检查终止条件: type={ctype}, target={target}, roi={roi}")
-
-        try:
-            if ctype == "ocr":
-                reco_param = JOCR(
-                    expected=[target],
-                    roi=roi_t,
-                )
-                detail = context.run_recognition_direct(
-                    JRecognitionType.OCR,
-                    reco_param,
-                    image,
-                )
-                hit = bool(detail and detail.hit)
-                logger.info(f"[TraverseAndExecute._check_stop] OCR 识别结果: {'命中' if hit else '未命中'}")
-
-            elif ctype == "template":
-                reco_param = JTemplateMatch(
-                    template=[target],
-                    threshold=[condition.get("threshold", 0.8)],
-                    roi=roi_t,
-                )
-                detail = context.run_recognition_direct(
-                    JRecognitionType.TemplateMatch,
-                    reco_param,
-                    image,
-                )
-                hit = bool(detail and detail.hit)
-                logger.info(f"[TraverseAndExecute._check_stop] 模板匹配结果: {'命中' if hit else '未命中'}")
-
-            else:
-                logger.warning(f"[TraverseAndExecute._check_stop] 未知的终止条件类型: {ctype}")
+        """
+        检查终止条件。
+        - stop_method="template"：识别到 stop_template 图片则返回 True
+        - stop_method="ocr"：OCR 识别到 stop_ocr_text 中任意字符串则返回 True
+        stop_roi 为 [x, y, w, h]，None 表示全屏。
+        返回 False 表示不满足终止条件，继续循环。
+        """
+        if stop_method == "template":
+            if not stop_template:
                 return False
+            tmp_node = "__TraverseAndClick_stop_template_tmp__"
+            node_cfg: dict = {
+                "recognition": "TemplateMatch",
+                "template": stop_template,
+                "threshold": 0.8,
+                "action": "DoNothing",
+            }
+            if stop_roi is not None:
+                node_cfg["roi"] = stop_roi
+            context.override_pipeline({tmp_node: node_cfg})
+            detail = context.run_recognition(tmp_node, img)
+            return detail is not None and getattr(detail, "hit", False)
 
-            return hit
-            
-        except Exception as e:
-            logger.error(f"[TraverseAndExecute._check_stop] 终止条件检查异常: {e}")
-            return False
+        elif stop_method == "ocr":
+            if not stop_ocr_text:
+                return False
+            tmp_node = "__TraverseAndClick_stop_ocr_tmp__"
+            node_cfg: dict = {
+                "recognition": "OCR",
+                "expected": stop_ocr_text,
+                "action": "DoNothing",
+            }
+            if stop_roi is not None:
+                node_cfg["roi"] = stop_roi
+            context.override_pipeline({tmp_node: node_cfg})
+            detail = context.run_recognition(tmp_node, img)
+            return detail is not None and getattr(detail, "hit", False)
 
-
+        return False

@@ -1,53 +1,287 @@
+// {
+//     "开始遍历": {
+//         "recognition": "DirectHit",
+//         "action": "Custom",
+//         "custom_action": "TraverseAndExecute",
+//         "custom_action_param": {
+//             "template": "免费券红点.png",
+//             "threshold": 0.7,
+//             "roi": [
+//                 0,
+//                 0,
+//                 1280,
+//                 720
+//             ],
+//             "action_sequence": [
+//                 "TaskA"
+//             ], // 入口任务
+//             "last_task": "TaskB", // TaskA 子流程最后一个节点
+//             "after_all": "TaskC",
+//             "after_all_last_task": "TaskC", // TaskC 只有一个节点，填自身即可
+//             "stop_condition": {
+//                 "type": "ocr",
+//                 "target": "料理屋",
+//                 "roi": [
+//                     0,
+//                     0,
+//                     1280,
+//                     720
+//                 ]
+//             }
+//         }
+//     },
+//     "TaskA": {
+//         "recognition": "OCR",
+//         "expected": [
+//             "1"
+//         ],
+//         "action": "DoNothing",
+//         "next": [
+//             "TaskB"
+//         ]
+//     },
+//     "TaskB": {
+//         "recognition": "OCR",
+//         "expected": [
+//             "1"
+//         ],
+//         "action": "DoNothing"
+//     },
+//     "TaskC": {
+//         "recognition": "OCR",
+//         "expected": [
+//             "1"
+//         ],
+//         "action": "DoNothing"
+//     }
+// }
 {
-    "开始遍历": {
-        "recognition": "DirectHit",
+    "StartTraverse": {
         "action": "Custom",
-        "custom_action": "TraverseAndExecute",
+        "custom_action": "TraverseAndClick",
         "custom_action_param": {
+            // ── 识别方式 ──────────────────────────────────────
+            // "method": "template" | "ocr"
+            "method": "template",
+            // [template] 待匹配的模板图片文件名（resource 目录下的路径）
             "template": "免费券红点.png",
-            "threshold": 0.7,
             "roi": [
-                0,
-                200,
-                1080,
-                700
+                8,
+                83,
+                148,
+                628
             ],
-            "action_sequence": [
-                "TaskA",
-                "TaskB"
+            // [ocr] 待匹配的文字列表，命中其中任意一项即算匹配
+            // "ocr_text": ["词A", "词B"],
+            // 匹配分数阈值（0~1），高于此值才纳入遍历
+            "threshold": 0.7,
+            // ── 终止条件 ──────────────────────────────────────
+            // "stop_method": "template" | "ocr"
+            "stop_method": "ocr",
+            // [template] 终止条件：识别到该图片则停止
+            // "stop_template": "ui/end_screen.png",
+            // [ocr] 终止条件：OCR 识别到包含以下任一字符串则停止
+            "stop_ocr_text": [
+                "屋",
             ],
-            "after_all": "TaskC",
-            "stop_condition": {
-                "type": "ocr",
-                "target": "料理屋",
-                "roi": [
-                    0,
-                    0,
-                    500,
-                    100
-                ]
-            }
+            // ── 任务配置 ──────────────────────────────────────
+            // 点击每个匹配项后执行的任务节点名
+            "task_each": "TaskA",
+            // 每轮遍历全部结束后执行的任务节点名
+            "task_after_round": "Swipe_Once",
+            // ── 可选配置 ──────────────────────────────────────
+            // 两次识别之间的等待时间（秒），默认 0.5
+            "round_delay": 0.5,
+            // 每次点击后、执行 task_each 前的等待时间（秒），默认 0.3
+            "click_delay": 0.3,
+            // 最大循环轮数，防止死循环，默认 50，设为 -1 表示不限制
+            "max_rounds": 50
         }
     },
     "TaskA": {
-        "recognition": "OCR",
-        "expected": [
-            "1"
-        ],
-        "action": "Click"
+        "next": [
+            "TaskB"
+        ]
     },
     "TaskB": {
-        "recognition": "OCR",
-        "expected": [
-            "1"
-        ],
-        "action": "Click"
+        "recognition": "DirectHit",
+        "action": "DoNothing",
     },
-    "TaskC": {
-        "recognition": "OCR",
-        "expected": [
-            "1"
+    "Swipe_Once": {
+        "action": "Swipe",
+        "begin": [
+            140,
+            680
         ],
-        "action": "Click"
-    }
+        "end": [
+            [
+                140,
+                665
+            ],
+            [
+                140,
+                650
+            ],
+            [
+                140,
+                635
+            ],
+            [
+                140,
+                620
+            ],
+            [
+                140,
+                605
+            ],
+            [
+                140,
+                590
+            ],
+            [
+                140,
+                575
+            ],
+            [
+                140,
+                560
+            ],
+            [
+                140,
+                545
+            ],
+            [
+                140,
+                530
+            ],
+            [
+                140,
+                515
+            ],
+            [
+                140,
+                500
+            ],
+            [
+                140,
+                485
+            ],
+            [
+                140,
+                470
+            ],
+            [
+                140,
+                455
+            ],
+            [
+                140,
+                440
+            ],
+            [
+                140,
+                425
+            ],
+            [
+                140,
+                410
+            ],
+            [
+                140,
+                395
+            ],
+            [
+                140,
+                380
+            ],
+            [
+                140,
+                365
+            ],
+            [
+                140,
+                350
+            ],
+            [
+                140,
+                335
+            ],
+            [
+                140,
+                320
+            ],
+            [
+                140,
+                305
+            ],
+            [
+                140,
+                290
+            ],
+            [
+                140,
+                275
+            ],
+            [
+                140,
+                260
+            ],
+            [
+                140,
+                245
+            ],
+            [
+                140,
+                230
+            ],
+            [
+                140,
+                215
+            ],
+            [
+                140,
+                200
+            ],
+            [
+                140,
+                185
+            ],
+            [
+                140,
+                170
+            ],
+            [
+                140,
+                155
+            ],
+            [
+                140,
+                140
+            ],
+            [
+                140,
+                125
+            ],
+            [
+                140,
+                110
+            ],
+            [
+                140,
+                95
+            ],
+            [
+                140,
+                80
+            ],
+            [
+                140,
+                65
+            ],
+            [
+                140,
+                60
+            ]
+        ]
+    },
 }

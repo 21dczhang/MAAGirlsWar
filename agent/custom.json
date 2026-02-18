@@ -1,7 +1,7 @@
 {
     "TraverseAndExecute": {
         "type": "action",
-        "class": "TraverseAndExecute",
+        "class": "TraverseAndClick",
         "file_path": "{agent_path}/custom/action/Traverse.py"
     },
     "Count": {

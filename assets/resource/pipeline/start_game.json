@@ -6,7 +6,7 @@
             "StartGame_Skip_Notice",
             "StartGame_Click_Start"
         ],
-        "timeout": 30000,
+        "timeout": 90000,
         "focus": "启动游戏！"
     },
     "StartGame_Skip_Notice": {
