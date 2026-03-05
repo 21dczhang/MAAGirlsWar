@@ -100,6 +100,7 @@
         ],
         "focus": "已经进入冒险界面..."
     },
+    "MaoXian_MaoXian_Start_LongJiTiaoZhan": {},
     "MaoXian_MaoXian_ComeBack_Home": {
         "next": [
             "[JumpBack]MaoXian_Call_Backup_Button",

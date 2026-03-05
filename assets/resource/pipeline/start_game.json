@@ -34,8 +34,9 @@
         ],
         "action": "Click",
         "next": [
-            "StartGame_Skip_Activity",
-            "StartGame_Is_HomePage"
+            "[JumpBack]StartGame_Skip_Activity",
+            "StartGame_Is_HomePage",
+            "StartGame_Click_Start"
         ],
         "timeout": 60000,
         "focus": "点击start game"
@@ -44,7 +45,8 @@
         "recognition": "OCR",
         "expected": [
             "確認",
-            "點擊"
+            "點擊",
+            "活動結束"
         ],
         "action": "Click",
         "target": [
@@ -53,10 +55,7 @@
             13,
             11
         ],
-        "next": [
-            "StartGame_Is_HomePage",
-            "StartGame_Skip_Activity"
-        ],
+        "next": [],
         "focus": "跳过活动提示"
     },
     "StartGame_Is_HomePage": {

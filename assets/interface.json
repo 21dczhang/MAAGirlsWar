@@ -53,17 +53,24 @@
             "default_check": true
         },
         {
+            "name": "招募 - 抽取免费抽",
+            "entry": "MianFeiChouKa_Start",
+            "default_check": true
+        },
+        {
+            "name": "冒险 - 龙姬",
+            "entry": "LongJi_Start",
+            "description": "龙姬自动打，默认选择等级10 6次",
+            "default_check": true
+        },
+        {
             "name": "领取日常/周常奖励",
             "entry": "Daily_Task_Start",
             "default_check": true
         },
         {
             "name": "测试任务",
-            "entry": "MianFeiChouKa_Start"
-        },
-        {
-            "name": "测试任务2",
-            "entry": "MianFeiChouKa_MianFeiChouKa_WuShuang_And_LiaoLi_Switch"
+            "entry": "LongJi_Start"
         }
     ],
     "option": {}

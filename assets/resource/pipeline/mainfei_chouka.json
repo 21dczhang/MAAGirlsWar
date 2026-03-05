@@ -436,7 +436,7 @@
             "招募 - 免费1次2.png"
         ],
         "threshold": [
-            0.9
+            0.8
         ],
         "action": "Click",
         "post_delay": 1500,

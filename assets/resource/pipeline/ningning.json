@@ -61,6 +61,7 @@
             "NingNing_Find_NingNing",
             "[JumpBack]NingNing_Call_Backup_Button"
         ],
+        "post_delay": 1500,
         "focus": "点击宁宁助手"
     },
     "NingNing_NingNing_Start": {
@@ -69,13 +70,65 @@
             "助手"
         ],
         "next": [
-            "[JumpBack]NingNing_NingNing_Start_RiChang",
-            "[JumpBack]NingNing_NingNing_Start_ChengChi",
-            "[JumpBack]NingNing_NingNing_Start_YuLiu",
+            // "[JumpBack]NingNing_NingNing_Start_RiChang",
+            // "[JumpBack]NingNing_NingNing_Start_ChengChi",
+            // "[JumpBack]NingNing_NingNing_Start_YuLiu",
+            "[JumpBack]NingNing_NingNing_Start_YiJianWanCheng",
             //后续等级够了，在这里写一键执行的任务，上面三个可以删除
             "NingNing_NingNing_ComeBack_Home"
         ],
+        "post_delay": 1000,
         "focus": "已经进入宁宁助手界面"
+    },
+    "NingNing_NingNing_Start_YiJianWanCheng": {
+        "max_hit": 1,
+        "recognition": "TemplateMatch",
+        "template": [
+            "一键执行.png"
+        ],
+        "action": "Click",
+        "roi": [
+            1042,
+            532,
+            232,
+            163
+        ],
+        "threshold": [
+            0.9
+        ],
+        "next": [
+            "[JumpBack]NingNing_NingNing_Start_YiJianWanCheng_Doing",
+            "NingNing_NingNing_Start_YiJianWanCheng_Complete"
+        ]
+    },
+    "NingNing_NingNing_Start_YiJianWanCheng_Doing": {
+        "recognition": "OCR",
+        "expected": [
+            "中斷"
+        ],
+        "roi": [
+            482,
+            515,
+            275,
+            112
+        ],
+        "focus": "一键任务执行中...",
+        "post_delay": 2000
+    },
+    "NingNing_NingNing_Start_YiJianWanCheng_Complete": {
+        "recognition": "OCR",
+        "expected": [
+            "完成"
+        ],
+        "roi": [
+            482,
+            515,
+            275,
+            112
+        ],
+        "action": "Click",
+        "focus": "一键任务执行完成",
+        "post_delay": 2000
     },
     "NingNing_NingNing_Start_RiChang": {
         "recognition": "OCR",
