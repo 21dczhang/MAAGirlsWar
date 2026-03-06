@@ -290,9 +290,9 @@
     },
     "Daily_UP50_Daily_UP50_ComeBack_Home": {
         "next": [
+            "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage",
             "[JumpBack]Daily_UP50_Call_Backup_Button",
             "[JumpBack]Daily_UP50_Call_Backup_Button_Direct",
-            "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage"
         ],
         "focus": "执行完毕，返回主界面"
     },

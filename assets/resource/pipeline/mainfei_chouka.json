@@ -76,6 +76,7 @@
         ]
     },
     "MianFeiChouKa_Find_MianFeiChouKa": {
+        "max_hit": 1,
         "recognition": "TemplateMatch",
         "template": [
             "招募.png"
@@ -93,7 +94,8 @@
     },
     "MianFeiChouKa_MianFeiChouKa_Start": {
         "next": [
-            "MianFeiChouKa_MianFeiChouKa_Find_MianFeiChouKa_And_Click"
+            "[JumpBack]MianFeiChouKa_MianFeiChouKa_Find_MianFeiChouKa_And_Click",
+            "MianFeiChouKa_MianFeiChouKa_ComeBack_Home"
         ],
         "focus": "开始抽免费抽..."
     },
@@ -275,6 +277,7 @@
         ]
     },
     "MianFeiChouKa_MianFeiChouKa_Find_MianFeiChouKa_And_Click": {
+        "max_hit": 1,
         "recognition": "DirectHit",
         "action": "Custom",
         "custom_action": "TraverseAndClick",
@@ -336,6 +339,12 @@
         "expected": [
             "無雙",
             "料理"
+        ],
+        "roi": [
+            162,
+            72,
+            1103,
+            624
         ],
         "next": [
             "MianFeiChouKa_MianFeiChouKa_WuShuang_And_LiaoLi_Start"
@@ -448,9 +457,9 @@
     },
     "MianFeiChouKa_MianFeiChouKa_ComeBack_Home": {
         "next": [
+            "MianFeiChouKa_MianFeiChouKa_ComeBack_Home_Is_HomePage",
             "[JumpBack]MianFeiChouKa_Call_Backup_Button",
             "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct",
-            "MianFeiChouKa_MianFeiChouKa_ComeBack_Home_Is_HomePage"
         ],
         "focus": "执行完毕，返回主界面"
     },

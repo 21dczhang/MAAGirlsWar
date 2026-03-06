@@ -148,9 +148,9 @@
     },
     "VIP_EXP_VIP_EXP_ComeBack_Home": {
         "next": [
+            "VIP_EXP_VIP_EXP_ComeBack_Home_Is_HomePage",
             "[JumpBack]VIP_EXP_Call_Backup_Button",
             "[JumpBack]VIP_EXP_Call_Backup_Button_Direct",
-            "VIP_EXP_VIP_EXP_ComeBack_Home_Is_HomePage"
         ],
         "focus": "执行完毕，返回主界面"
     },
