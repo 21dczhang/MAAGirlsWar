@@ -6,7 +6,7 @@
             "StartGame_Skip_Notice",
             "StartGame_Click_Start"
         ],
-        "timeout": 90000,
+        "timeout": 200000,
         "focus": "启动游戏！"
     },
     "StartGame_Skip_Notice": {
@@ -34,11 +34,20 @@
         ],
         "action": "Click",
         "next": [
+            "[JumpBack]StartGame_Call_Backup_Button",
+            "[JumpBack]StartGame_Skip_Activity2",
             "[JumpBack]StartGame_Skip_Activity",
+            "[JumpBack]StartGame_Skip_Activity3",
             "StartGame_Is_HomePage",
             "StartGame_Click_Start"
         ],
-        "timeout": 60000,
+        "roi": [
+            31,
+            163,
+            1208,
+            553
+        ],
+        "timeout": 200000,
         "focus": "点击start game"
     },
     "StartGame_Skip_Activity": {
@@ -57,6 +66,27 @@
         ],
         "next": [],
         "focus": "跳过活动提示"
+    },
+    "StartGame_Skip_Activity2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "启动游戏-跳过活动-确认.png"
+        ],
+        "threshold": [
+            0.8
+        ],
+        "action": "Click",
+        "next": [],
+        "focus": "跳过活动提示2"
+    },
+    "StartGame_Skip_Activity3": {
+        "recognition": "OCR",
+        "expected": [
+            "前往"
+        ],
+        "action": "Click",
+        "next": [],
+        "focus": "跳过活动提示3"
     },
     "StartGame_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -84,5 +114,17 @@
         ],
         "focus": "再次确认：邮箱，结束任务",
         "next": []
+    },
+    "StartGame_Call_Backup_Button": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "返回键.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "focus": "触发返回",
+        "post_delay": 1500
     },
 }

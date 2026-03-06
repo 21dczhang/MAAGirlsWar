@@ -97,6 +97,28 @@
             0.9
         ],
         "next": [
+            "NingNing_NingNing_Start_YiJianWanCheng2",
+            "[JumpBack]NingNing_NingNing_Start_YiJianWanCheng_Doing",
+            "NingNing_NingNing_Start_YiJianWanCheng_Complete"
+        ]
+    },
+    "NingNing_NingNing_Start_YiJianWanCheng2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "一键执行.png"
+        ],
+        "action": "Click",
+        "roi": [
+            1042,
+            532,
+            232,
+            163
+        ],
+        "threshold": [
+            0.9
+        ],
+        "next": [
+            "NingNing_NingNing_Start_YiJianWanCheng2",
             "[JumpBack]NingNing_NingNing_Start_YiJianWanCheng_Doing",
             "NingNing_NingNing_Start_YiJianWanCheng_Complete"
         ]
