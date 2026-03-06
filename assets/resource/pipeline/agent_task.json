@@ -96,16 +96,19 @@
             "click_delay": 0.3,
             // 最大循环轮数，防止死循环，默认 50，设为 -1 表示不限制
             "max_rounds": 50
-        }
+        },
+        "focus": "【日志】流程开始（StartTraverse）"
     },
     "TaskA": {
         "next": [
             "TaskB"
-        ]
+        ],
+        "focus": "【日志】节点执行（TaskA）"
     },
     "TaskB": {
         "recognition": "DirectHit",
         "action": "DoNothing",
+        "focus": "【日志】节点执行（TaskB）"
     },
     "Swipe_Once": {
         "action": "Swipe",
@@ -282,6 +285,7 @@
                 140,
                 60
             ]
-        ]
+        ],
+        "focus": "【日志】滑动处理（Swipe_Once）"
     },
 }

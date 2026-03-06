@@ -4,7 +4,7 @@
             "NingNing_Is_HomePage",
             "[JumpBack]NingNing_Call_Backup_Button"
         ],
-        "focus": "启动宁宁助手！"
+        "focus": "【日志】流程开始（NingNing_Start）"
     },
     "NingNing_Call_Backup_Button": {
         "recognition": "TemplateMatch",
@@ -15,7 +15,8 @@
             0.9
         ],
         "action": "Click",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（NingNing_Call_Backup_Button）"
     },
     "NingNing_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -25,13 +26,13 @@
         "threshold": [
             0.9
         ],
-        "focus": "识别到邮箱，3s后再次识别",
-        "post_delay": 3000,
         "max_hit": 2,
+        "post_delay": 3000,
         "next": [
             "NingNing_Is_HomePage2",
             "[JumpBack]NingNing_Call_Backup_Button"
-        ]
+        ],
+        "focus": "【日志】主页识别（NingNing_Is_HomePage）"
     },
     "NingNing_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -41,11 +42,11 @@
         "threshold": [
             0.9
         ],
-        "focus": "再次确认：邮箱，已回到主界面，开始宁宁助手",
         "next": [
             "NingNing_Find_NingNing",
             "[JumpBack]NingNing_Call_Backup_Button"
-        ]
+        ],
+        "focus": "【日志】主页识别（NingNing_Is_HomePage2）"
     },
     "NingNing_Find_NingNing": {
         "recognition": "TemplateMatch",
@@ -56,19 +57,20 @@
             0.9
         ],
         "action": "Click",
+        "post_delay": 1500,
         "next": [
             "NingNing_NingNing_Start",
             "NingNing_Find_NingNing",
             "[JumpBack]NingNing_Call_Backup_Button"
         ],
-        "post_delay": 1500,
-        "focus": "点击宁宁助手"
+        "focus": "【日志】查找目标（NingNing_Find_NingNing）"
     },
     "NingNing_NingNing_Start": {
         "recognition": "OCR",
         "expected": [
             "助手"
         ],
+        "post_delay": 1000,
         "next": [
             // "[JumpBack]NingNing_NingNing_Start_RiChang",
             // "[JumpBack]NingNing_NingNing_Start_ChengChi",
@@ -77,51 +79,52 @@
             //后续等级够了，在这里写一键执行的任务，上面三个可以删除
             "NingNing_NingNing_ComeBack_Home"
         ],
-        "post_delay": 1000,
-        "focus": "已经进入宁宁助手界面"
+        "focus": "【日志】流程开始（NingNing_NingNing_Start）"
     },
     "NingNing_NingNing_Start_YiJianWanCheng": {
-        "max_hit": 1,
         "recognition": "TemplateMatch",
         "template": [
             "一键执行.png"
         ],
-        "action": "Click",
+        "threshold": [
+            0.9
+        ],
         "roi": [
             1042,
             532,
             232,
             163
         ],
-        "threshold": [
-            0.9
-        ],
+        "action": "Click",
+        "max_hit": 1,
         "next": [
             "NingNing_NingNing_Start_YiJianWanCheng2",
             "[JumpBack]NingNing_NingNing_Start_YiJianWanCheng_Doing",
             "NingNing_NingNing_Start_YiJianWanCheng_Complete"
-        ]
+        ],
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_YiJianWanCheng）"
     },
     "NingNing_NingNing_Start_YiJianWanCheng2": {
         "recognition": "TemplateMatch",
         "template": [
             "一键执行.png"
         ],
-        "action": "Click",
+        "threshold": [
+            0.9
+        ],
         "roi": [
             1042,
             532,
             232,
             163
         ],
-        "threshold": [
-            0.9
-        ],
+        "action": "Click",
         "next": [
             "NingNing_NingNing_Start_YiJianWanCheng2",
             "[JumpBack]NingNing_NingNing_Start_YiJianWanCheng_Doing",
             "NingNing_NingNing_Start_YiJianWanCheng_Complete"
-        ]
+        ],
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_YiJianWanCheng2）"
     },
     "NingNing_NingNing_Start_YiJianWanCheng_Doing": {
         "recognition": "OCR",
@@ -134,8 +137,8 @@
             275,
             112
         ],
-        "focus": "一键任务执行中...",
-        "post_delay": 2000
+        "post_delay": 2000,
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_YiJianWanCheng_Doing）"
     },
     "NingNing_NingNing_Start_YiJianWanCheng_Complete": {
         "recognition": "OCR",
@@ -149,8 +152,8 @@
             112
         ],
         "action": "Click",
-        "focus": "一键任务执行完成",
-        "post_delay": 2000
+        "post_delay": 2000,
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_YiJianWanCheng_Complete）"
     },
     "NingNing_NingNing_Start_RiChang": {
         "recognition": "OCR",
@@ -164,11 +167,11 @@
             474
         ],
         "action": "Click",
+        "max_hit": 1,
         "next": [
             "NingNing_NingNing_Start_RiChang_Start"
         ],
-        "max_hit": 1,
-        "focus": "宁宁助手 - 日常任务"
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_RiChang）"
     },
     "NingNing_NingNing_Start_RiChang_Start": {
         "recognition": "OCR",
@@ -182,12 +185,12 @@
             100
         ],
         "action": "Click",
+        "timeout": 60000,
         "next": [
             "NingNing_NingNing_Start_RiChang_Complete",
             "NingNing_NingNing_Start_RiChang_Start"
         ],
-        "timeout": 60000,
-        "focus": "执行日常任务"
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_RiChang_Start）"
     },
     "NingNing_NingNing_Start_RiChang_Complete": {
         "recognition": "TemplateMatch",
@@ -195,7 +198,7 @@
             "完成.png"
         ],
         "action": "Click",
-        "focus": "日常任务完成"
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_RiChang_Complete）"
     },
     "NingNing_NingNing_Start_ChengChi": {
         "recognition": "OCR",
@@ -209,11 +212,11 @@
             474
         ],
         "action": "Click",
+        "max_hit": 1,
         "next": [
             "NingNing_NingNing_Start_ChengChi_Start"
         ],
-        "max_hit": 1,
-        "focus": "宁宁助手 - 城池任务"
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_ChengChi）"
     },
     "NingNing_NingNing_Start_ChengChi_Start": {
         "recognition": "OCR",
@@ -231,7 +234,7 @@
             "NingNing_NingNing_Start_ChengChi_Complete",
             "NingNing_NingNing_Start_ChengChi_Start"
         ],
-        "focus": "执行城池任务"
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_ChengChi_Start）"
     },
     "NingNing_NingNing_Start_ChengChi_Complete": {
         "recognition": "TemplateMatch",
@@ -239,30 +242,30 @@
             "完成.png"
         ],
         "action": "Click",
-        "focus": "城池任务完成"
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_ChengChi_Complete）"
     },
     "NingNing_NingNing_Start_YuLiu": {
         "max_hit": 1,
-        "focus": "宁宁助手 - 预留任务栏，现在等级太低了还没解锁"
+        "focus": "【日志】流程开始（NingNing_NingNing_Start_YuLiu）"
     },
     "NingNing_NingNing_ComeBack_Home": {
         "recognition": "OCR",
         "expected": [
             "繼續"
         ],
-        "action": "Click",
         "target": [
             482,
             698,
             11,
             8
         ],
+        "action": "Click",
         "next": [
             "NingNing_NingNing_ComeBack_Home",
             "[JumpBack]NingNing_Call_Backup_Button",
             "NingNing_NingNing_ComeBack_Home_Is_HomePage"
         ],
-        "focus": "执行完毕，返回主界面"
+        "focus": "【日志】回到主页（NingNing_NingNing_ComeBack_Home）"
     },
     "NingNing_NingNing_ComeBack_Home_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -272,12 +275,12 @@
         "threshold": [
             0.9
         ],
+        "post_delay": 1500,
         "next": [
             "NingNing_NingNing_ComeBack_Home_Is_HomePage2",
             "[JumpBack]NingNing_Call_Backup_Button",
         ],
-        "post_delay": 1500,
-        "focus": "执行完毕，返回主界面1"
+        "focus": "【日志】主页识别（NingNing_NingNing_ComeBack_Home_Is_HomePage）"
     },
     "NingNing_NingNing_ComeBack_Home_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -287,6 +290,6 @@
         "threshold": [
             0.9
         ],
-        "focus": "执行完毕，第二次确认，已经在主界面"
+        "focus": "【日志】主页识别（NingNing_NingNing_ComeBack_Home_Is_HomePage2）"
     }
 }

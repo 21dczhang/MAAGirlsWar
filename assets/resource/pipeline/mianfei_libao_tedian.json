@@ -5,7 +5,7 @@
             "[JumpBack]TeDian_Call_Backup_Button",
             "[JumpBack]TeDian_Call_Backup_Button_Direct"
         ],
-        "focus": "领取免费礼包 - 储值"
+        "focus": "【日志】流程开始（TeDian_Start）"
     },
     "TeDian_Call_Backup_Button": {
         "recognition": "TemplateMatch",
@@ -16,8 +16,8 @@
             0.9
         ],
         "action": "Click",
-        "focus": "触发返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（TeDian_Call_Backup_Button）"
     },
     "TeDian_Call_Backup_Button_Direct": {
         "target": [
@@ -27,8 +27,8 @@
             9
         ],
         "action": "Click",
-        "focus": "点击返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（TeDian_Call_Backup_Button_Direct）"
     },
     "TeDian_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -38,14 +38,14 @@
         "threshold": [
             0.9
         ],
-        "focus": "识别到邮箱，3s后再次识别",
-        "post_delay": 3000,
         "max_hit": 2,
+        "post_delay": 3000,
         "next": [
             "TeDian_Is_HomePage2",
             "[JumpBack]TeDian_Call_Backup_Button",
             "[JumpBack]TeDian_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】主页识别（TeDian_Is_HomePage）"
     },
     "TeDian_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -55,18 +55,21 @@
         "threshold": [
             0.9
         ],
-        "focus": "再次确认：邮箱，已回到主界面，开始领取vip经验",
         "next": [
             "TeDian_Find_TeDian",
             "[JumpBack]TeDian_Call_Backup_Button",
             "[JumpBack]TeDian_Call_Backup_Button_Direct"
             //这里开始主任务，已经回到主界面了
-        ]
+        ],
+        "focus": "【日志】主页识别（TeDian_Is_HomePage2）"
     },
     "TeDian_Find_TeDian": {
         "recognition": "TemplateMatch",
         "template": [
             "特典.png"
+        ],
+        "threshold": [
+            0.9
         ],
         "roi": [
             766,
@@ -74,15 +77,13 @@
             511,
             149
         ],
-        "threshold": [
-            0.9
-        ],
         "action": "Click",
+        "post_delay": 2000,
         "next": [
             "TeDian_Find_TeDian",
             "TeDian_Find_TeDian_Start"
         ],
-        "post_delay": 2000
+        "focus": "【日志】查找目标（TeDian_Find_TeDian）"
     },
     "TeDian_Find_TeDian_Start": {
         "recognition": "TemplateMatch",
@@ -108,18 +109,18 @@
         ],
         "action": "Click",
         "post_delay": 1000,
-        "order_by": "Random",
         "next": [
             "[JumpBack]TeDian_Find_TeDian_Start_MianFei",
             "TeDian_Find_TeDian_Start"
         ],
+        "focus": "【日志】查找目标（TeDian_Find_TeDian_Start）",
         "on_error": [
             "TeDian_TeDian_ComeBack_Home"
-        ]
+        ],
+        "order_by": "Random"
     },
     "TeDian_Find_TeDian_Start_MianFei": {
         "recognition": "TemplateMatch",
-        "action": "Click",
         "template": [
             "免费礼包-特典-一键领取1.png",
             "免费礼包-特典-一键领取2.png",
@@ -132,10 +133,12 @@
             0.9,
             0.9,
         ],
+        "action": "Click",
         "post_delay": 1000,
         "next": [
             "MianFeiChouKa_Call_Backup_Button_Direct"
         ],
+        "focus": "【日志】查找目标（TeDian_Find_TeDian_Start_MianFei）"
     },
     "TeDian_TeDian_ComeBack_Home": {
         "next": [
@@ -143,7 +146,7 @@
             "[JumpBack]TeDian_Call_Backup_Button",
             "[JumpBack]TeDian_Call_Backup_Button_Direct",
         ],
-        "focus": "执行完毕，返回主界面"
+        "focus": "【日志】回到主页（TeDian_TeDian_ComeBack_Home）"
     },
     "TeDian_TeDian_ComeBack_Home_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -153,12 +156,12 @@
         "threshold": [
             0.9
         ],
+        "post_delay": 1500,
         "next": [
             "TeDian_TeDian_ComeBack_Home_Is_HomePage2",
             "[JumpBack]TeDian_Call_Backup_Button",
         ],
-        "post_delay": 1500,
-        "focus": "执行完毕，返回主界面1"
+        "focus": "【日志】主页识别（TeDian_TeDian_ComeBack_Home_Is_HomePage）"
     },
     "TeDian_TeDian_ComeBack_Home_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -168,6 +171,6 @@
         "threshold": [
             0.9
         ],
-        "focus": "执行完毕，第二次确认，已经在主界面"
+        "focus": "【日志】主页识别（TeDian_TeDian_ComeBack_Home_Is_HomePage2）"
     }
 }

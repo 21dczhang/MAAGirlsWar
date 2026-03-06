@@ -5,7 +5,7 @@
             "[JumpBack]LongJi_Call_Backup_Button",
             "[JumpBack]LongJi_Call_Backup_Button_Direct"
         ],
-        "focus": "完成冒险 - 龙姬 任务"
+        "focus": "【日志】流程开始（LongJi_Start）"
     },
     "LongJi_Call_Backup_Button": {
         "recognition": "TemplateMatch",
@@ -16,8 +16,8 @@
             0.9
         ],
         "action": "Click",
-        "focus": "触发返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（LongJi_Call_Backup_Button）"
     },
     "LongJi_Call_Backup_Button_Direct": {
         "target": [
@@ -27,8 +27,8 @@
             9
         ],
         "action": "Click",
-        "focus": "点击返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（LongJi_Call_Backup_Button_Direct）"
     },
     "LongJi_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -38,14 +38,14 @@
         "threshold": [
             0.9
         ],
-        "focus": "识别到邮箱，3s后再次识别",
-        "post_delay": 3000,
         "max_hit": 2,
+        "post_delay": 3000,
         "next": [
             "LongJi_Is_HomePage2",
             "[JumpBack]LongJi_Call_Backup_Button",
             "[JumpBack]LongJi_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】主页识别（LongJi_Is_HomePage）"
     },
     "LongJi_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -55,13 +55,13 @@
         "threshold": [
             0.9
         ],
-        "focus": "再次确认：邮箱，已回到主界面，开始领取vip经验",
         "next": [
             "LongJi_Find_LongJi",
             "[JumpBack]LongJi_Call_Backup_Button",
             "[JumpBack]LongJi_Call_Backup_Button_Direct"
             //这里开始主任务，已经回到主界面了
-        ]
+        ],
+        "focus": "【日志】主页识别（LongJi_Is_HomePage2）"
     },
     "LongJi_Find_LongJi": {
         "recognition": "TemplateMatch",
@@ -72,12 +72,13 @@
             0.9
         ],
         "action": "Click",
+        "post_delay": 2000,
         "next": [
             "LongJi_Find_LongJi",
             "[JumpBack]LongJi_Find_LongJi_Swip_Once",
             "LongJi_Find_LongJi_Goto_LongJi"
         ],
-        "post_delay": 2000
+        "focus": "【日志】查找目标（LongJi_Find_LongJi）"
     },
     "LongJi_Find_LongJi_Swip_Once": {
         "recognition": "DirectHit",
@@ -92,14 +93,13 @@
         ],
         "max_hit": 1,
         "post_delay": 1500,
-        "focus": "滑动中..."
+        "focus": "【日志】查找目标（LongJi_Find_LongJi_Swip_Once）"
     },
     "LongJi_Find_LongJi_Goto_LongJi": {
         "recognition": "TemplateMatch",
         "template": [
             "龙姬挑战.png"
         ],
-        "action": "Click",
         "threshold": [
             0.9
         ],
@@ -109,18 +109,20 @@
             1220,
             341
         ],
+        "action": "Click",
         "post_delay": 2500,
         "next": [
             "LongJi_LongJi_Start"
-        ]
+        ],
+        "focus": "【日志】查找目标（LongJi_Find_LongJi_Goto_LongJi）"
     },
     "LongJi_LongJi_Start": {
+        "post_delay": 1500,
         "next": [
             "[JumpBack]LongJi_LongJi_Check_CiShu",
             "LongJi_LongJi_Check_CiShu_No_Enought_CiShu"
         ],
-        "post_delay": 1500,
-        "focus": "已经进入龙姬主界面界面..."
+        "focus": "【日志】流程开始（LongJi_LongJi_Start）"
     },
     "LongJi_LongJi_Check_CiShu": {
         "recognition": "OCR",
@@ -133,16 +135,17 @@
             22,
             24
         ],
+        "post_delay": 2000,
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start"
         ],
-        "post_delay": 2000,
-        "focus": "剩余次数，开始寻找等级并战斗..."
+        "focus": "【日志】节点执行（LongJi_LongJi_Check_CiShu）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start": {
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Swip"
-        ]
+        ],
+        "focus": "【日志】流程开始（LongJi_LongJi_Has_CiShu_Fight_Start）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Swip": {
         "recognition": "DirectHit",
@@ -159,7 +162,8 @@
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_10",
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_9"
-        ]
+        ],
+        "focus": "【日志】流程开始（LongJi_LongJi_Has_CiShu_Fight_Start_Swip）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_10": {
         "recognition": "TemplateMatch",
@@ -170,11 +174,12 @@
             0.9
         ],
         "action": "Click",
-        "post_delay": 1500,
         "max_hit": 3,
+        "post_delay": 1500,
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_DuiWu",
-        ]
+        ],
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_10）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_9": {
         "recognition": "TemplateMatch",
@@ -185,11 +190,12 @@
             0.9
         ],
         "action": "Click",
-        "post_delay": 1500,
         "max_hit": 3,
+        "post_delay": 1500,
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_DuiWu",
-        ]
+        ],
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_9）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_DuiWu": {
         "recognition": "TemplateMatch",
@@ -204,7 +210,8 @@
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu",
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu"
-        ]
+        ],
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_DuiWu）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu": {
         "recognition": "TemplateMatch",
@@ -217,7 +224,8 @@
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu2",
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu",
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu",
-        ]
+        ],
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu2": {
         "recognition": "TemplateMatch",
@@ -228,7 +236,8 @@
         "post_delay": 1000,
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Wait_For_Fight"
-        ]
+        ],
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu2）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu": {
         "recognition": "TemplateMatch",
@@ -239,7 +248,8 @@
         "post_delay": 1000,
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu2"
-        ]
+        ],
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu2": {
         "recognition": "TemplateMatch",
@@ -250,7 +260,8 @@
         "post_delay": 1000,
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Wait_For_Fight"
-        ]
+        ],
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu2）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Wait_For_Fight": {
         "recognition": "OCR",
@@ -263,32 +274,38 @@
             323,
             106
         ],
+        "timeout": 12000,
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Wait_For_Fight",
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Fight"
         ],
-        "timeout": 12000
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Wait_For_Fight）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Fight": {
         "recognition": "OCR",
+        "expected": [
+            "跳"
+        ],
         "roi": [
             1100,
             68,
             175,
             518
         ],
-        "expected": [
-            "跳"
-        ],
         "action": "Click",
+        "timeout": 120000,
         "post_delay": 3000,
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Fight_Complete"
         ],
-        "timeout": 120000
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Fight）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Fight_Complete": {
         "recognition": "OCR",
+        "expected": [
+            "點擊",
+            "繼續"
+        ],
         "roi": [
             464,
             650,
@@ -296,14 +313,11 @@
             69
         ],
         "action": "Click",
-        "expected": [
-            "點擊",
-            "繼續"
-        ],
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Fight_Complete",
             "LongJi_LongJi_Has_CiShu_Fight_Is_LongJi_Home"
-        ]
+        ],
+        "focus": "【日志】查找目标（LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Fight_Complete）"
     },
     "LongJi_LongJi_Has_CiShu_Fight_Is_LongJi_Home": {
         "recognition": "TemplateMatch",
@@ -319,7 +333,7 @@
             160,
             96
         ],
-        "focus": "已回到龙姬主界面"
+        "focus": "【日志】节点执行（LongJi_LongJi_Has_CiShu_Fight_Is_LongJi_Home）"
     },
     "LongJi_LongJi_Check_CiShu_No_Enought_CiShu": {
         "recognition": "OCR",
@@ -332,11 +346,11 @@
             22,
             24
         ],
-        "focus": "没有次数，结束战斗",
+        "post_delay": 1500,
         "next": [
             "LongJi_LongJi_ComeBack_Home"
         ],
-        "post_delay": 1500
+        "focus": "【日志】节点执行（LongJi_LongJi_Check_CiShu_No_Enought_CiShu）"
     },
     "LongJi_LongJi_ComeBack_Home": {
         "next": [
@@ -344,7 +358,7 @@
             "[JumpBack]LongJi_Call_Backup_Button",
             "[JumpBack]LongJi_Call_Backup_Button_Direct",
         ],
-        "focus": "执行完毕，返回主界面"
+        "focus": "【日志】回到主页（LongJi_LongJi_ComeBack_Home）"
     },
     "LongJi_LongJi_ComeBack_Home_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -354,12 +368,12 @@
         "threshold": [
             0.9
         ],
+        "post_delay": 1500,
         "next": [
             "LongJi_LongJi_ComeBack_Home_Is_HomePage2",
             "[JumpBack]LongJi_Call_Backup_Button",
         ],
-        "post_delay": 1500,
-        "focus": "执行完毕，返回主界面1"
+        "focus": "【日志】主页识别（LongJi_LongJi_ComeBack_Home_Is_HomePage）"
     },
     "LongJi_LongJi_ComeBack_Home_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -369,6 +383,6 @@
         "threshold": [
             0.9
         ],
-        "focus": "执行完毕，第二次确认，已经在主界面"
+        "focus": "【日志】主页识别（LongJi_LongJi_ComeBack_Home_Is_HomePage2）"
     }
 }

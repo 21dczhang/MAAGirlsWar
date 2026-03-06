@@ -5,7 +5,7 @@
             "[JumpBack]Template2_Call_Backup_Button",
             "[JumpBack]Template2_Call_Backup_Button_Direct"
         ],
-        "focus": "领取up 50%免费奖励，如花嫁、UR闪等礼盒"
+        "focus": "【日志】流程开始（Template2_Start）"
     },
     "Template2_Call_Backup_Button": {
         "recognition": "TemplateMatch",
@@ -16,8 +16,8 @@
             0.9
         ],
         "action": "Click",
-        "focus": "触发返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（Template2_Call_Backup_Button）"
     },
     "Template2_Call_Backup_Button_Direct": {
         "target": [
@@ -27,8 +27,8 @@
             9
         ],
         "action": "Click",
-        "focus": "点击返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（Template2_Call_Backup_Button_Direct）"
     },
     "Template2_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -38,14 +38,14 @@
         "threshold": [
             0.9
         ],
-        "focus": "识别到邮箱，3s后再次识别",
-        "post_delay": 3000,
         "max_hit": 2,
+        "post_delay": 3000,
         "next": [
             "Template2_Is_HomePage2",
             "[JumpBack]Template2_Call_Backup_Button",
             "[JumpBack]Template2_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】主页识别（Template2_Is_HomePage）"
     },
     "Template2_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -55,13 +55,13 @@
         "threshold": [
             0.9
         ],
-        "focus": "再次确认：邮箱，已回到主界面，开始领取vip经验",
         "next": [
             "Template2_Find_Template2",
             "[JumpBack]Template2_Call_Backup_Button",
             "[JumpBack]Template2_Call_Backup_Button_Direct"
             //这里开始主任务，已经回到主界面了
-        ]
+        ],
+        "focus": "【日志】主页识别（Template2_Is_HomePage2）"
     },
     "Template2_Find_Template2": {
         // "recognition": "DirectHit",
@@ -77,6 +77,15 @@
             "[JumpBack]Template2_Call_Backup_Button",
             "[JumpBack]Template2_Call_Backup_Button_Direct"
         ],
+        // "recognition": "DirectHit",
+        // "action": "Click",
+        // "target": [
+        //     100,
+        //     196,
+        //     101,
+        //     46
+        // ],
+        "focus": "【日志】查找目标（Template2_Find_Template2）"
         // "focus": "点击活动栏"
     },
     "Template2_Template2_Start": {
@@ -88,7 +97,7 @@
         //     "Template2_Template2_ComeBack_Home"
         // ],
         "next": [],
-        "focus": "监控活动界面..."
+        "focus": "【日志】流程开始（Template2_Template2_Start）"
     },
     "Template2_Template2_ComeBack_Home": {
         "next": [
@@ -96,7 +105,7 @@
             "[JumpBack]Template2_Call_Backup_Button_Direct",
             "Template2_Template2_ComeBack_Home_Is_HomePage"
         ],
-        "focus": "执行完毕，返回主界面"
+        "focus": "【日志】回到主页（Template2_Template2_ComeBack_Home）"
     },
     "Template2_Template2_ComeBack_Home_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -106,12 +115,12 @@
         "threshold": [
             0.9
         ],
+        "post_delay": 1500,
         "next": [
             "Template2_Template2_ComeBack_Home_Is_HomePage2",
             "[JumpBack]Template2_Call_Backup_Button",
         ],
-        "post_delay": 1500,
-        "focus": "执行完毕，返回主界面1"
+        "focus": "【日志】主页识别（Template2_Template2_ComeBack_Home_Is_HomePage）"
     },
     "Template2_Template2_ComeBack_Home_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -121,6 +130,6 @@
         "threshold": [
             0.9
         ],
-        "focus": "执行完毕，第二次确认，已经在主界面"
+        "focus": "【日志】主页识别（Template2_Template2_ComeBack_Home_Is_HomePage2）"
     }
 }

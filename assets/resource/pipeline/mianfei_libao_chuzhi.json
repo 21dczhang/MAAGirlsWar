@@ -5,7 +5,7 @@
             "[JumpBack]ChuZhi_Call_Backup_Button",
             "[JumpBack]ChuZhi_Call_Backup_Button_Direct"
         ],
-        "focus": "领取免费礼包 - 储值"
+        "focus": "【日志】流程开始（ChuZhi_Start）"
     },
     "ChuZhi_Call_Backup_Button": {
         "recognition": "TemplateMatch",
@@ -16,8 +16,8 @@
             0.9
         ],
         "action": "Click",
-        "focus": "触发返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（ChuZhi_Call_Backup_Button）"
     },
     "ChuZhi_Call_Backup_Button_Direct": {
         "target": [
@@ -27,8 +27,8 @@
             9
         ],
         "action": "Click",
-        "focus": "点击返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（ChuZhi_Call_Backup_Button_Direct）"
     },
     "ChuZhi_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -38,14 +38,14 @@
         "threshold": [
             0.9
         ],
-        "focus": "识别到邮箱，3s后再次识别",
-        "post_delay": 3000,
         "max_hit": 2,
+        "post_delay": 3000,
         "next": [
             "ChuZhi_Is_HomePage2",
             "[JumpBack]ChuZhi_Call_Backup_Button",
             "[JumpBack]ChuZhi_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】主页识别（ChuZhi_Is_HomePage）"
     },
     "ChuZhi_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -55,18 +55,21 @@
         "threshold": [
             0.9
         ],
-        "focus": "再次确认：邮箱，已回到主界面，开始领取vip经验",
         "next": [
             "ChuZhi_Find_ChuZhi",
             "[JumpBack]ChuZhi_Call_Backup_Button",
             "[JumpBack]ChuZhi_Call_Backup_Button_Direct"
             //这里开始主任务，已经回到主界面了
-        ]
+        ],
+        "focus": "【日志】主页识别（ChuZhi_Is_HomePage2）"
     },
     "ChuZhi_Find_ChuZhi": {
         "recognition": "TemplateMatch",
         "template": [
             "储值.png"
+        ],
+        "threshold": [
+            0.9
         ],
         "roi": [
             1051,
@@ -74,15 +77,13 @@
             226,
             156
         ],
-        "threshold": [
-            0.9
-        ],
         "action": "Click",
+        "post_delay": 2000,
         "next": [
             "ChuZhi_Find_ChuZhi",
             "ChuZhi_Find_ChuZhi_Start"
         ],
-        "post_delay": 2000
+        "focus": "【日志】查找目标（ChuZhi_Find_ChuZhi）"
     },
     "ChuZhi_Find_ChuZhi_Start": {
         "recognition": "TemplateMatch",
@@ -102,40 +103,43 @@
         ],
         "action": "Click",
         "post_delay": 1000,
-        "order_by": "Random",
         "next": [
             "[JumpBack]ChuZhi_Find_ChuZhi_Start_MianFei1",
             "[JumpBack]ChuZhi_Find_ChuZhi_Start_MianFei2",
             "ChuZhi_Find_ChuZhi_Start"
         ],
+        "focus": "【日志】查找目标（ChuZhi_Find_ChuZhi_Start）",
         "on_error": [
             "ChuZhi_ChuZhi_ComeBack_Home"
-        ]
+        ],
+        "order_by": "Random"
     },
     "ChuZhi_Find_ChuZhi_Start_MianFei1": {
         "recognition": "OCR",
-        "action": "Click",
         "expected": [
             "免費"
         ],
+        "action": "Click",
+        "post_delay": 1000,
         "next": [
             "MianFeiChouKa_Call_Backup_Button_Direct"
         ],
-        "post_delay": 1000
+        "focus": "【日志】查找目标（ChuZhi_Find_ChuZhi_Start_MianFei1）"
     },
     "ChuZhi_Find_ChuZhi_Start_MianFei2": {
         "recognition": "TemplateMatch",
-        "action": "Click",
         "template": [
             "免费礼包-储值-领取.png"
         ],
         "threshold": [
             0.9
         ],
+        "action": "Click",
         "post_delay": 1000,
         "next": [
             "MianFeiChouKa_Call_Backup_Button_Direct"
         ],
+        "focus": "【日志】查找目标（ChuZhi_Find_ChuZhi_Start_MianFei2）"
     },
     "ChuZhi_ChuZhi_ComeBack_Home": {
         "next": [
@@ -143,7 +147,7 @@
             "[JumpBack]ChuZhi_Call_Backup_Button",
             "[JumpBack]ChuZhi_Call_Backup_Button_Direct",
         ],
-        "focus": "执行完毕，返回主界面"
+        "focus": "【日志】回到主页（ChuZhi_ChuZhi_ComeBack_Home）"
     },
     "ChuZhi_ChuZhi_ComeBack_Home_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -153,12 +157,12 @@
         "threshold": [
             0.9
         ],
+        "post_delay": 1500,
         "next": [
             "ChuZhi_ChuZhi_ComeBack_Home_Is_HomePage2",
             "[JumpBack]ChuZhi_Call_Backup_Button",
         ],
-        "post_delay": 1500,
-        "focus": "执行完毕，返回主界面1"
+        "focus": "【日志】主页识别（ChuZhi_ChuZhi_ComeBack_Home_Is_HomePage）"
     },
     "ChuZhi_ChuZhi_ComeBack_Home_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -168,6 +172,6 @@
         "threshold": [
             0.9
         ],
-        "focus": "执行完毕，第二次确认，已经在主界面"
+        "focus": "【日志】主页识别（ChuZhi_ChuZhi_ComeBack_Home_Is_HomePage2）"
     }
 }

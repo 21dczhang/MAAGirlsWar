@@ -2,37 +2,44 @@
     "StartGame_Start": {
         "action": "StartApp",
         "package": "com.y2sgames.girlwarstw",
+        "timeout": 200000,
         "next": [
             "StartGame_Skip_Notice",
             "StartGame_Click_Start"
         ],
-        "timeout": 200000,
-        "focus": "启动游戏！"
+        "focus": "【日志】流程开始（StartGame_Start）"
     },
     "StartGame_Skip_Notice": {
         "recognition": "OCR",
         "expected": [
             "面"
         ],
-        "action": "Click",
         "roi": [
             105,
             672,
             1074,
             47
         ],
+        "action": "Click",
         "next": [
             "StartGame_Skip_Notice",
             "StartGame_Click_Start"
         ],
-        "focus": "跳过公告"
+        "focus": "【日志】跳过处理（StartGame_Skip_Notice）"
     },
     "StartGame_Click_Start": {
         "recognition": "OCR",
         "expected": [
             "(?i)s"
         ],
+        "roi": [
+            31,
+            163,
+            1208,
+            553
+        ],
         "action": "Click",
+        "timeout": 200000,
         "next": [
             "[JumpBack]StartGame_Call_Backup_Button",
             "[JumpBack]StartGame_Skip_Activity2",
@@ -41,14 +48,7 @@
             "StartGame_Is_HomePage",
             "StartGame_Click_Start"
         ],
-        "roi": [
-            31,
-            163,
-            1208,
-            553
-        ],
-        "timeout": 200000,
-        "focus": "点击start game"
+        "focus": "【日志】点击处理（StartGame_Click_Start）"
     },
     "StartGame_Skip_Activity": {
         "recognition": "OCR",
@@ -57,15 +57,15 @@
             "點擊",
             "活動結束"
         ],
-        "action": "Click",
         "target": [
             486,
             694,
             13,
             11
         ],
+        "action": "Click",
         "next": [],
-        "focus": "跳过活动提示"
+        "focus": "【日志】跳过处理（StartGame_Skip_Activity）"
     },
     "StartGame_Skip_Activity2": {
         "recognition": "TemplateMatch",
@@ -77,7 +77,7 @@
         ],
         "action": "Click",
         "next": [],
-        "focus": "跳过活动提示2"
+        "focus": "【日志】跳过处理（StartGame_Skip_Activity2）"
     },
     "StartGame_Skip_Activity3": {
         "recognition": "OCR",
@@ -86,7 +86,7 @@
         ],
         "action": "Click",
         "next": [],
-        "focus": "跳过活动提示3"
+        "focus": "【日志】跳过处理（StartGame_Skip_Activity3）"
     },
     "StartGame_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -96,13 +96,13 @@
         "threshold": [
             0.9
         ],
-        "focus": "识别到邮箱，3s后再次识别",
-        "post_delay": 3000,
         "max_hit": 2,
+        "post_delay": 3000,
         "next": [
             "StartGame_Skip_Activity",
             "StartGame_Is_HomePage2"
-        ]
+        ],
+        "focus": "【日志】主页识别（StartGame_Is_HomePage）"
     },
     "StartGame_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -112,8 +112,8 @@
         "threshold": [
             0.9
         ],
-        "focus": "再次确认：邮箱，结束任务",
-        "next": []
+        "next": [],
+        "focus": "【日志】主页识别（StartGame_Is_HomePage2）"
     },
     "StartGame_Call_Backup_Button": {
         "recognition": "TemplateMatch",
@@ -124,7 +124,7 @@
             0.9
         ],
         "action": "Click",
-        "focus": "触发返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（StartGame_Call_Backup_Button）"
     },
 }

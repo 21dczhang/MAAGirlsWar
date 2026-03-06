@@ -5,7 +5,7 @@
             "[JumpBack]Daily_Task_Call_Backup_Button",
             "[JumpBack]Daily_Task_Call_Backup_Button_Direct"
         ],
-        "focus": "领取日常/周长任务奖励"
+        "focus": "【日志】流程开始（Daily_Task_Start）"
     },
     "Daily_Task_Call_Backup_Button": {
         "recognition": "TemplateMatch",
@@ -16,8 +16,8 @@
             0.9
         ],
         "action": "Click",
-        "focus": "触发返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（Daily_Task_Call_Backup_Button）"
     },
     "Daily_Task_Call_Backup_Button_Direct": {
         "target": [
@@ -27,8 +27,8 @@
             9
         ],
         "action": "Click",
-        "focus": "点击返回",
-        "post_delay": 1500
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（Daily_Task_Call_Backup_Button_Direct）"
     },
     "Daily_Task_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -38,14 +38,14 @@
         "threshold": [
             0.9
         ],
-        "focus": "识别到邮箱，3s后再次识别",
-        "post_delay": 3000,
         "max_hit": 2,
+        "post_delay": 3000,
         "next": [
             "Daily_Task_Is_HomePage2",
             "[JumpBack]Daily_Task_Call_Backup_Button",
             "[JumpBack]Daily_Task_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】主页识别（Daily_Task_Is_HomePage）"
     },
     "Daily_Task_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -55,13 +55,13 @@
         "threshold": [
             0.9
         ],
-        "focus": "再次确认：邮箱，已回到主界面，开始领取vip经验",
         "next": [
             "Daily_Task_Find_Daily_Task",
             "[JumpBack]Daily_Task_Call_Backup_Button",
             "[JumpBack]Daily_Task_Call_Backup_Button_Direct"
             //这里开始主任务，已经回到主界面了
-        ]
+        ],
+        "focus": "【日志】主页识别（Daily_Task_Is_HomePage2）"
     },
     "Daily_Task_Find_Daily_Task": {
         "recognition": "TemplateMatch",
@@ -75,7 +75,7 @@
         "next": [
             "Daily_Task_Daily_Task_Start",
         ],
-        "focus": "点击 任务"
+        "focus": "【日志】查找目标（Daily_Task_Find_Daily_Task）"
     },
     "Daily_Task_Daily_Task_Start": {
         "next": [
@@ -85,7 +85,7 @@
             "[JumpBack]Daily_Task_Daily_Task_Start_RiHuoYueJiangLi_Start",
             "Daily_Task_Daily_Task_ComeBack_Home"
         ],
-        "focus": "任务主界面"
+        "focus": "【日志】流程开始（Daily_Task_Daily_Task_Start）"
     },
     "Daily_Task_Daily_Task_Start_Click_MeiRi": {
         "recognition": "OCR",
@@ -99,7 +99,8 @@
             370
         ],
         "action": "Click",
-        "max_hit": 1
+        "max_hit": 1,
+        "focus": "【日志】点击处理（Daily_Task_Daily_Task_Start_Click_MeiRi）"
     },
     "Daily_Task_Daily_Task_Start_Click_YiJianLingQu": {
         "recognition": "OCR",
@@ -114,12 +115,12 @@
         ],
         "action": "Click",
         "max_hit": 1,
+        "post_delay": 500,
         "next": [
             "[JumpBack]Daily_Task_Daily_Task_Start_Click_YiJianLingQu",
             "Daily_Task_Call_Backup_Button_Direct"
         ],
-        "post_delay": 500,
-        "focus": "点击一键领取"
+        "focus": "【日志】点击处理（Daily_Task_Daily_Task_Start_Click_YiJianLingQu）"
     },
     "Daily_Task_Daily_Task_Start_Click_ZhouHuoYueJiangLi_Start": {
         "recognition": "TemplateMatch",
@@ -135,12 +136,12 @@
             874,
             77
         ],
+        "action": "Click",
+        "timeout": 5000,
         "next": [
             "[JumpBack]Daily_Task_Daily_Task_Start_Click_ZhouHuoYueJiangLi"
         ],
-        "action": "Click",
-        "timeout": 5000,
-        "focus": "领取周活跃度奖励"
+        "focus": "【日志】点击处理（Daily_Task_Daily_Task_Start_Click_ZhouHuoYueJiangLi_Start）"
     },
     "Daily_Task_Daily_Task_Start_Click_ZhouHuoYueJiangLi": {
         "recognition": "TemplateMatch",
@@ -156,12 +157,12 @@
             874,
             77
         ],
+        "action": "Click",
+        "post_delay": 500,
         "next": [
             "Daily_Task_Call_Backup_Button_Direct"
         ],
-        "action": "Click",
-        "post_delay": 500,
-        "focus": "领取周活跃度奖励"
+        "focus": "【日志】点击处理（Daily_Task_Daily_Task_Start_Click_ZhouHuoYueJiangLi）"
     },
     "Daily_Task_Daily_Task_Start_RiHuoYueJiangLi_Start": {
         "recognition": "TemplateMatch",
@@ -175,11 +176,11 @@
             0.9,
             0.9
         ],
+        "timeout": 5000,
         "next": [
             "[JumpBack]Daily_Task_Daily_Task_Start_RiHuoYueJiangLi"
         ],
-        "timeout": 5000,
-        "focus": "点击宝箱"
+        "focus": "【日志】流程开始（Daily_Task_Daily_Task_Start_RiHuoYueJiangLi_Start）"
     },
     "Daily_Task_Daily_Task_Start_RiHuoYueJiangLi": {
         "recognition": "TemplateMatch",
@@ -194,12 +195,12 @@
             0.9
         ],
         "action": "Click",
+        "post_delay": 500,
         "next": [
             "[JumpBack]Daily_Task_Daily_Task_Start_RiHuoYueJiangLi_LingQu",
             "Daily_Task_Call_Backup_Button_Direct"
         ],
-        "post_delay": 500,
-        "focus": "点击宝箱"
+        "focus": "【日志】流程开始（Daily_Task_Daily_Task_Start_RiHuoYueJiangLi）"
     },
     "Daily_Task_Daily_Task_Start_RiHuoYueJiangLi_LingQu": {
         "recognition": "TemplateMatch",
@@ -210,6 +211,7 @@
             0.9
         ],
         "action": "Click",
+        "focus": "【日志】流程开始（Daily_Task_Daily_Task_Start_RiHuoYueJiangLi_LingQu）"
     },
     "Daily_Task_Daily_Task_ComeBack_Home": {
         "next": [
@@ -217,7 +219,7 @@
             "[JumpBack]Daily_Task_Call_Backup_Button",
             "[JumpBack]Daily_Task_Call_Backup_Button_Direct",
         ],
-        "focus": "执行完毕，返回主界面"
+        "focus": "【日志】回到主页（Daily_Task_Daily_Task_ComeBack_Home）"
     },
     "Daily_Task_Daily_Task_ComeBack_Home_Is_HomePage": {
         "recognition": "TemplateMatch",
@@ -227,12 +229,12 @@
         "threshold": [
             0.9
         ],
+        "post_delay": 1500,
         "next": [
             "Daily_Task_Daily_Task_ComeBack_Home_Is_HomePage2",
             "[JumpBack]Daily_Task_Call_Backup_Button",
         ],
-        "post_delay": 1500,
-        "focus": "执行完毕，返回主界面1"
+        "focus": "【日志】主页识别（Daily_Task_Daily_Task_ComeBack_Home_Is_HomePage）"
     },
     "Daily_Task_Daily_Task_ComeBack_Home_Is_HomePage2": {
         "recognition": "TemplateMatch",
@@ -242,6 +244,6 @@
         "threshold": [
             0.9
         ],
-        "focus": "执行完毕，第二次确认，已经在主界面"
+        "focus": "【日志】主页识别（Daily_Task_Daily_Task_ComeBack_Home_Is_HomePage2）"
     }
 }
