@@ -117,7 +117,7 @@
     "LongJi_LongJi_Start": {
         "next": [
             "[JumpBack]LongJi_LongJi_Check_CiShu",
-            "[JumpBack]LongJi_LongJi_Check_CiShu_No_Enought_CiShu"
+            "LongJi_LongJi_Check_CiShu_No_Enought_CiShu"
         ],
         "post_delay": 1500,
         "focus": "已经进入龙姬主界面界面..."
@@ -157,10 +157,11 @@
         ],
         "post_delay": 2000,
         "next": [
-            "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level"
+            "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_10",
+            "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_9"
         ]
     },
-    "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level": {
+    "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_10": {
         "recognition": "TemplateMatch",
         "template": [
             "龙姬level-10.png"
@@ -170,6 +171,22 @@
         ],
         "action": "Click",
         "post_delay": 1500,
+        "max_hit": 3,
+        "next": [
+            "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_DuiWu",
+        ]
+    },
+    "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_9": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "龙姬 - 等级9.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "max_hit": 3,
         "next": [
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_DuiWu",
         ]
@@ -180,12 +197,37 @@
             "龙姬 - 队伍.png"
         ],
         "threshold": [
-            0.9
+            0.8
         ],
         "action": "Click",
         "post_delay": 1000,
         "next": [
+            "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu",
             "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu"
+        ]
+    },
+    "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "龙姬-加入.png"
+        ],
+        "action": "Click",
+        "post_delay": 1000,
+        "next": [
+            "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu2",
+            "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu",
+            "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu",
+        ]
+    },
+    "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_JiaRuDuiWu2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "龙姬 - 准备挑战.png"
+        ],
+        "action": "Click",
+        "post_delay": 1000,
+        "next": [
+            "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu_Wait_For_Fight"
         ]
     },
     "LongJi_LongJi_Has_CiShu_Fight_Start_Find_Level_ChuangJianDuiWu": {

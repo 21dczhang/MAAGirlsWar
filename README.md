@@ -19,10 +19,10 @@
 
 开发计划
 > [x]龙姬自动
-> []果园
 > []竞技场
 > []月登陆
-> []免费礼包
+> []温泉
+> [x]免费礼包
 > [x]~~~一键约会 & 学校教育~~~ 宁宁助手一键完成了，不需要手动实现
 
 > **MaaFramework** 是基于图像识别技术、运用 [MAA](https://github.com/MaaAssistantArknights/MaaAssistantArknights) 开发经验去芜存菁、完全重写的新一代自动化黑盒测试框架。
