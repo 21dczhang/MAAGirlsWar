@@ -60,7 +60,19 @@
         {
             "name": "冒险 - 龙姬",
             "entry": "LongJi_Start",
-            "description": "龙姬自动打，默认选择等级10 6次",
+            "description": "龙姬自动打，默认选择等级10 3次， 等级9 3次",
+            "default_check": true
+        },
+        {
+            "name": "免费礼包 - 储值",
+            "entry": "ChuZhi_Start",
+            "description": "免费礼包 领取",
+            "default_check": true
+        },
+        {
+            "name": "免费礼包 - 特典",
+            "entry": "TeDian_Start",
+            "description": "免费礼包 领取",
             "default_check": true
         },
         {
