@@ -1,0 +1,289 @@
+{
+    "YueDengLu_Start": {
+        "next": [
+            "YueDengLu_Is_HomePage",
+            "[JumpBack]YueDengLu_Call_Backup_Button",
+            "[JumpBack]YueDengLu_Call_Backup_Button2",
+            "[JumpBack]YueDengLu_Call_Backup_Button_Direct"
+        ],
+        "focus": "【日志】流程开始（YueDengLu_Start）"
+    },
+    "YueDengLu_Call_Backup_Button": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "返回键.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（YueDengLu_Call_Backup_Button）"
+    },
+    "YueDengLu_Call_Backup_Button2": {
+        "recognition": "OCR",
+        "expected": [
+            "面"
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（YueDengLu_Call_Backup_Button2）"
+    },
+    "YueDengLu_Call_Backup_Button_Direct": {
+        "target": [
+            411,
+            702,
+            10,
+            9
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（YueDengLu_Call_Backup_Button_Direct）"
+    },
+    "YueDengLu_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "max_hit": 2,
+        "post_delay": 3000,
+        "next": [
+            "YueDengLu_Is_HomePage2",
+            "[JumpBack]YueDengLu_Call_Backup_Button",
+            "[JumpBack]YueDengLu_Call_Backup_Button2",
+            "[JumpBack]YueDengLu_Call_Backup_Button_Direct"
+        ],
+        "focus": "【日志】主页识别（YueDengLu_Is_HomePage）"
+    },
+    "YueDengLu_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "next": [
+            "YueDengLu_YueDengLu_Start",
+            "[JumpBack]YueDengLu_Call_Backup_Button",
+            "[JumpBack]YueDengLu_Call_Backup_Button2",
+            "[JumpBack]YueDengLu_Call_Backup_Button_Direct"
+            //这里开始主任务，已经回到主界面了
+        ],
+        "focus": "【日志】主页识别（YueDengLu_Is_HomePage2）"
+    },
+    "YueDengLu_YueDengLu_Start": {
+        "next": [
+            "[JumpBack]YueDengLu_YueDengLu_Start_Find_YueDengLu_Start"
+        ],
+        "focus": "【日志】流程开始（YueDengLu_YueDengLu_Start）"
+    },
+    "YueDengLu_YueDengLu_Start_Find_YueDengLu_Start": {
+        "max_hit": 1,
+        "next": [
+            "YueDengLu_YueDengLu_Start_Find_YueDengLu",
+            "[JumpBack]YueDengLu_YueDengLu_Start_Find_YueDengLu_Swip_Once"
+        ]
+    },
+    "YueDengLu_YueDengLu_Start_Find_YueDengLu": {
+        "recognition": "OCR",
+        "expected": [
+            "月登"
+        ],
+        "roi": [
+            21,
+            164,
+            224,
+            105
+        ],
+        "action": "Click",
+        "next": [
+            "YueDengLu_YueDengLu_Start_Find_YueDengLu2"
+        ]
+    },
+    "YueDengLu_YueDengLu_Start_Find_YueDengLu2": {
+        "recognition": "OCR",
+        "expected": [
+            "月登"
+        ],
+        "roi": [
+            331,
+            60,
+            879,
+            614
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "next": [
+            "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_JinRiJiangLi",
+            "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_3日奖励",
+            "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_7日奖励",
+            "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_15日奖励",
+            "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_25日奖励",
+        ],
+        "timeout": 5000
+    },
+    "YueDengLu_YueDengLu_Start_LingQu_JinRiJiangLi": {
+        "recognition": "OCR",
+        "max_hit": 1,
+        "expected": [
+            "本日"
+        ],
+        "roi": [
+            430,
+            245,
+            750,
+            408
+        ],
+        "action": "Click",
+        "post_delay": 1000,
+        "next": [
+            "YueDengLu_Call_Backup_Button_Direct"
+        ]
+    },
+    "YueDengLu_YueDengLu_Start_LingQu_3日奖励": {
+        "recognition": "OCR",
+        "max_hit": 1,
+        "expected": [
+            "3"
+        ],
+        "action": "Click",
+        "target_offset": [
+            0,
+            -50,
+            0,
+            0
+        ],
+        "roi": [
+            458,
+            118,
+            700,
+            86
+        ],
+        "post_delay": 500,
+        "next": [
+            "YueDengLu_Call_Backup_Button_Direct"
+        ]
+    },
+    "YueDengLu_YueDengLu_Start_LingQu_7日奖励": {
+        "recognition": "OCR",
+        "max_hit": 1,
+        "expected": [
+            "7"
+        ],
+        "action": "Click",
+        "target_offset": [
+            0,
+            -50,
+            0,
+            0
+        ],
+        "roi": [
+            458,
+            118,
+            700,
+            86
+        ],
+        "post_delay": 500,
+        "next": [
+            "YueDengLu_Call_Backup_Button_Direct"
+        ]
+    },
+    "YueDengLu_YueDengLu_Start_LingQu_15日奖励": {
+        "recognition": "OCR",
+        "max_hit": 1,
+        "expected": [
+            "15日"
+        ],
+        "action": "Click",
+        "target_offset": [
+            0,
+            -50,
+            0,
+            0
+        ],
+        "roi": [
+            458,
+            118,
+            700,
+            86
+        ],
+        "post_delay": 500,
+        "next": [
+            "YueDengLu_Call_Backup_Button_Direct"
+        ]
+    },
+    "YueDengLu_YueDengLu_Start_LingQu_25日奖励": {
+        "recognition": "OCR",
+        "max_hit": 1,
+        "expected": [
+            "25日"
+        ],
+        "action": "Click",
+        "target_offset": [
+            0,
+            -50,
+            0,
+            0
+        ],
+        "roi": [
+            458,
+            118,
+            700,
+            86
+        ],
+        "post_delay": 500,
+        "next": [
+            "YueDengLu_Call_Backup_Button_Direct"
+        ]
+    },
+    "YueDengLu_YueDengLu_Start_Find_YueDengLu_Swip_Once": {
+        "action": "Swipe",
+        "begin": [
+            212,
+            212
+        ],
+        "end": [
+            45,
+            212
+        ],
+    },
+    "YueDengLu_YueDengLu_ComeBack_Home": {
+        "next": [
+            "[JumpBack]YueDengLu_Call_Backup_Button",
+            "[JumpBack]YueDengLu_Call_Backup_Button2",
+            "[JumpBack]YueDengLu_Call_Backup_Button_Direct",
+            "YueDengLu_YueDengLu_ComeBack_Home_Is_HomePage"
+        ],
+        "focus": "【日志】回到主页（YueDengLu_YueDengLu_ComeBack_Home）"
+    },
+    "YueDengLu_YueDengLu_ComeBack_Home_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "post_delay": 1500,
+        "next": [
+            "YueDengLu_YueDengLu_ComeBack_Home_Is_HomePage2",
+            "[JumpBack]YueDengLu_Call_Backup_Button",
+            "[JumpBack]YueDengLu_Call_Backup_Button2",
+        ],
+        "focus": "【日志】主页识别（YueDengLu_YueDengLu_ComeBack_Home_Is_HomePage）"
+    },
+    "YueDengLu_YueDengLu_ComeBack_Home_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "【日志】主页识别（YueDengLu_YueDengLu_ComeBack_Home_Is_HomePage2）"
+    }
+}

@@ -55,6 +55,11 @@
             "default_check": true
         },
         {
+            "name": "月登陆奖励领取",
+            "entry": "YueDengLu_Start",
+            "default_check": true
+        },
+        {
             "name": "领取免费券 - 角色券 & 花嫁券",
             "entry": "Daily_UP50_Start",
             "default_check": true
@@ -88,7 +93,7 @@
         },
         {
             "name": "测试任务",
-            "entry": "PVP_Start"
+            "entry": "YueDengLu_Start"
         }
     ],
     "option": {}
