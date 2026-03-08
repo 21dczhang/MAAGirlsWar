@@ -169,9 +169,11 @@
         "template": [
             "日活跃奖励宝箱1.png",
             "日活跃奖励宝箱2.png",
-            "日活跃奖励宝箱3.png"
+            "日活跃奖励宝箱3.png",
+            "日活跃奖励宝箱4.png"
         ],
         "threshold": [
+            0.9,
             0.9,
             0.9,
             0.9
@@ -187,15 +189,17 @@
         "template": [
             "日活跃奖励宝箱1.png",
             "日活跃奖励宝箱2.png",
-            "日活跃奖励宝箱3.png"
+            "日活跃奖励宝箱3.png",
+            "日活跃奖励宝箱4.png"
         ],
         "threshold": [
+            0.9,
             0.9,
             0.9,
             0.9
         ],
         "action": "Click",
-        "post_delay": 500,
+        "post_delay": 2000,
         "next": [
             "[JumpBack]Daily_Task_Daily_Task_Start_RiHuoYueJiangLi_LingQu",
             "Daily_Task_Call_Backup_Button_Direct"

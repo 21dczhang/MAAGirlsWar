@@ -1,0 +1,227 @@
+{
+    "PVP_Start": {
+        "next": [
+            "PVP_Is_HomePage",
+            "[JumpBack]PVP_Call_Backup_Button",
+            "[JumpBack]PVP_Call_Backup_Button2",
+            "[JumpBack]PVP_Call_Backup_Button_Direct"
+        ],
+        "focus": "【日志】流程开始（PVP_Start）"
+    },
+    "PVP_Call_Backup_Button": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "返回键.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（PVP_Call_Backup_Button）"
+    },
+    "PVP_Call_Backup_Button2": {
+        "recognition": "OCR",
+        "expected": [
+            "面"
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（PVP_Call_Backup_Button2）"
+    },
+    "PVP_Call_Backup_Button_Direct": {
+        "target": [
+            411,
+            702,
+            10,
+            9
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（PVP_Call_Backup_Button_Direct）"
+    },
+    "PVP_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "max_hit": 2,
+        "post_delay": 3000,
+        "next": [
+            "PVP_Is_HomePage2",
+            "[JumpBack]PVP_Call_Backup_Button",
+            "[JumpBack]PVP_Call_Backup_Button2",
+            "[JumpBack]PVP_Call_Backup_Button_Direct"
+        ],
+        "focus": "【日志】主页识别（PVP_Is_HomePage）"
+    },
+    "PVP_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "next": [
+            "PVP_PVP_Start",
+            "[JumpBack]PVP_Call_Backup_Button",
+            "[JumpBack]PVP_Call_Backup_Button2",
+            "[JumpBack]PVP_Call_Backup_Button_Direct"
+            //这里开始主任务，已经回到主界面了
+        ],
+        "focus": "【日志】主页识别（PVP_Is_HomePage2）"
+    },
+    "PVP_PVP_Start": {
+        // "next": [
+        //     "[JumpBack]PVP_PVP_Start_Clip_Up",
+        //     "[JumpBack]PVP_PVP_Selet_Up50_Start",
+        //     //"[JumpBack]PVP_PVP_Start_Clip_Up_One",
+        //     //后续等级够了，在这里写一键执行的任务，上面三个可以删除
+        //     "PVP_PVP_ComeBack_Home"
+        // ],
+        "next": [
+            "PVP_PVP_Start_Go_PVP"
+        ],
+        "focus": "【日志】流程开始（PVP_PVP_Start）"
+    },
+    "PVP_PVP_Start_Go_PVP": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "竞技场1.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "next": [
+            "PVP_PVP_Start_Go_PVP2",
+            "PVP_PVP_Start_Go_PVP"
+        ],
+        "focus": "【日志】寻找PVP图标（PVP_PVP_Start_Go_PVP）"
+    },
+    "PVP_PVP_Start_Go_PVP2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "竞技场2.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "roi": [
+            88,
+            87,
+            1161,
+            375
+        ],
+        "target_offset": [
+            0,
+            -100,
+            0,
+            0
+        ],
+        "next": [
+            "PVP_PVP_Start_Check_CiShu",
+            "PVP_PVP_Start_Go_PVP2"
+        ],
+        "focus": "【日志】寻找PVP图标2（PVP_PVP_Start_Go_PVP2）"
+    },
+    "PVP_PVP_Start_Check_CiShu": {
+        "next": [
+            "PVP_PVP_Start_Check_CiShu_No_CiShu",
+            "PVP_PVP_Start_Check_CiShu_Has_CiShu"
+        ]
+    },
+    "PVP_PVP_Start_Check_CiShu_No_CiShu": {
+        "recognition": "OCR",
+        "expected": [
+            "0/5"
+        ],
+        "roi": [
+            577,
+            637,
+            65,
+            35
+        ],
+        "next": [
+            "PVP_PVP_ComeBack_Home"
+        ]
+    },
+    "PVP_PVP_Start_Check_CiShu_Has_CiShu": {
+        "recognition": "OCR",
+        "expected": [
+            "[1-5]/5"
+        ],
+        "roi": [
+            577,
+            637,
+            65,
+            35
+        ],
+        "next": [
+            "PVP_PVP_Start_Find_ZhanDOu"
+        ]
+    },
+    "PVP_PVP_Start_Find_ZhanDOu": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "竞技场挑战.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
+        "post_delay": 5000,
+        "next": [
+            "PVP_PVP_Start_Find_ZhanDOu_Wait_Complete",
+            "PVP_PVP_Start_Find_ZhanDOu"
+        ],
+        "focus": "【日志】寻找PVP图标2（PVP_PVP_Start_Go_PVP2）"
+    },
+    "PVP_PVP_Start_Find_ZhanDOu_Wait_Complete": {
+        "next": [
+            "PVP_PVP_ComeBack_Home"
+        ]
+    },
+    "PVP_PVP_ComeBack_Home": {
+        "next": [
+            "[JumpBack]PVP_Call_Backup_Button",
+            "[JumpBack]PVP_Call_Backup_Button2",
+            "[JumpBack]PVP_Call_Backup_Button_Direct",
+            "PVP_PVP_ComeBack_Home_Is_HomePage"
+        ],
+        "focus": "【日志】回到主页（PVP_PVP_ComeBack_Home）"
+    },
+    "PVP_PVP_ComeBack_Home_Is_HomePage": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "post_delay": 1500,
+        "next": [
+            "PVP_PVP_ComeBack_Home_Is_HomePage2",
+            "[JumpBack]PVP_Call_Backup_Button",
+            "[JumpBack]PVP_Call_Backup_Button2",
+        ],
+        "focus": "【日志】主页识别（PVP_PVP_ComeBack_Home_Is_HomePage）"
+    },
+    "PVP_PVP_ComeBack_Home_Is_HomePage2": {
+        "recognition": "TemplateMatch",
+        "template": [
+            "奖杯.png"
+        ],
+        "threshold": [
+            0.9
+        ],
+        "focus": "【日志】主页识别（PVP_PVP_ComeBack_Home_Is_HomePage2）"
+    }
+}

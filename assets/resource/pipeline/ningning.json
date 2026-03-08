@@ -97,6 +97,7 @@
         ],
         "action": "Click",
         "max_hit": 1,
+        "post_delay": 1500,
         "next": [
             "NingNing_NingNing_Start_YiJianWanCheng2",
             "[JumpBack]NingNing_NingNing_Start_YiJianWanCheng_Doing",
@@ -129,7 +130,9 @@
     "NingNing_NingNing_Start_YiJianWanCheng_Doing": {
         "recognition": "OCR",
         "expected": [
-            "中斷"
+            "中斷",
+            "中",
+            "斷"
         ],
         "roi": [
             482,

@@ -97,7 +97,8 @@
         //     "Daily_UP50_Daily_UP50_ComeBack_Home"
         // ],
         "next": [
-            "[JumpBack]Daily_UP50_Daily_UP50_Selet_Up50_Start"
+            "[JumpBack]Daily_UP50_Daily_UP50_Selet_Up50_Start",
+            "Daily_UP50_Daily_UP50_ComeBack_Home"
         ],
         "focus": "【日志】流程开始（Daily_UP50_Daily_UP50_Start）"
     },
@@ -176,13 +177,33 @@
         "post_delay": 5000,
         "next": [
             "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_MianFei",
+            "Daily_UP50_Daily_UP50_Click_Up50_Is_GuMuTanXian",
             "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_QueDing",
             "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JueSe",
             "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JueSe2",
             "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_HuaJia",
             "[JumpBack]Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JieXinJi",
+            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
         ],
         "focus": "【日志】点击处理（Daily_UP50_Daily_UP50_Click_Up50_Is_Claimed）"
+    },
+    "Daily_UP50_Daily_UP50_Click_Up50_Is_GuMuTanXian": {
+        "recognition": "OCR",
+        "expected": [
+            "墓"
+        ],
+        "roi": [
+            2,
+            1,
+            290,
+            53
+        ],
+        "next": [
+            "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage2",
+            "[JumpBack]Daily_UP50_Call_Backup_Button",
+            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
+        ],
+        "focus": "【日志】古墓探险，直接退出，点击处理（Daily_UP50_Daily_UP50_Click_Up50_Is_GuMuTanXian）"
     },
     "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_MianFei": {
         "recognition": "OCR",

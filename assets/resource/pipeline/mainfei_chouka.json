@@ -19,6 +19,25 @@
         "post_delay": 1500,
         "focus": "【日志】返回操作（MianFeiChouKa_Call_Backup_Button）"
     },
+    "MianFeiChouKa_Call_Backup_Button2": {
+        "recognition": "OCR",
+        "expected": [
+            "面"
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（MianFeiChouKa_Call_Backup_Button2）"
+    },
+    "MianFeiChouKa_Call_QueDing": {
+        "recognition": "OCR",
+        "expected": [
+            "確",
+            "認"
+        ],
+        "action": "Click",
+        "post_delay": 1500,
+        "focus": "【日志】返回操作（MianFeiChouKa_Call_QueDing）"
+    },
     "MianFeiChouKa_Call_Backup_Button_Direct": {
         "target": [
             411,
@@ -86,6 +105,8 @@
         "action": "Click",
         "max_hit": 1,
         "next": [
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button2",
+            "[JumpBack]MianFeiChouKa_Call_QueDing",
             "MianFeiChouKa_MianFeiChouKa_Start",
             "[JumpBack]MianFeiChouKa_Call_Backup_Button",
             "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct"

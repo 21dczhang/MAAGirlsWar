@@ -43,6 +43,18 @@
             "default_check": true
         },
         {
+            "name": "免费礼包 - 储值",
+            "entry": "ChuZhi_Start",
+            "description": "免费礼包 领取",
+            "default_check": true
+        },
+        {
+            "name": "免费礼包 - 特典",
+            "entry": "TeDian_Start",
+            "description": "免费礼包 领取",
+            "default_check": true
+        },
+        {
             "name": "领取免费券 - 角色券 & 花嫁券",
             "entry": "Daily_UP50_Start",
             "default_check": true
@@ -64,25 +76,13 @@
             "default_check": true
         },
         {
-            "name": "免费礼包 - 储值",
-            "entry": "ChuZhi_Start",
-            "description": "免费礼包 领取",
-            "default_check": true
-        },
-        {
-            "name": "免费礼包 - 特典",
-            "entry": "TeDian_Start",
-            "description": "免费礼包 领取",
-            "default_check": true
-        },
-        {
             "name": "领取日常/周常奖励",
             "entry": "Daily_Task_Start",
             "default_check": true
         },
         {
             "name": "测试任务",
-            "entry": "TeDian_Start"
+            "entry": "PVP_Start"
         }
     ],
     "option": {}
