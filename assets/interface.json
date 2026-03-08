@@ -70,6 +70,12 @@
             "default_check": true
         },
         {
+            "name": "竞技场",
+            "entry": "PVP_Start",
+            "description": "竞技场自动打，默认选择挑战5次",
+            "default_check": true
+        },
+        {
             "name": "冒险 - 龙姬",
             "entry": "LongJi_Start",
             "description": "龙姬自动打，默认选择等级10 3次， 等级9 3次",

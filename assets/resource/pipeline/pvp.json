@@ -136,7 +136,8 @@
         "next": [
             "PVP_PVP_Start_Check_CiShu_No_CiShu",
             "PVP_PVP_Start_Check_CiShu_Has_CiShu"
-        ]
+        ],
+        "focus": "【日志】节点执行（PVP_PVP_Start_Check_CiShu）"
     },
     "PVP_PVP_Start_Check_CiShu_No_CiShu": {
         "recognition": "OCR",
@@ -151,7 +152,8 @@
         ],
         "next": [
             "PVP_PVP_ComeBack_Home"
-        ]
+        ],
+        "focus": "【日志】节点执行（PVP_PVP_Start_Check_CiShu_No_CiShu）"
     },
     "PVP_PVP_Start_Check_CiShu_Has_CiShu": {
         "recognition": "OCR",
@@ -166,7 +168,8 @@
         ],
         "next": [
             "PVP_PVP_Start_Find_ZhanDOu"
-        ]
+        ],
+        "focus": "【日志】节点执行（PVP_PVP_Start_Check_CiShu_Has_CiShu）"
     },
     "PVP_PVP_Start_Find_ZhanDOu": {
         "recognition": "TemplateMatch",
@@ -187,7 +190,8 @@
     "PVP_PVP_Start_Find_ZhanDOu_Wait_Complete": {
         "next": [
             "PVP_PVP_ComeBack_Home"
-        ]
+        ],
+        "focus": "【日志】节点执行（PVP_PVP_Start_Find_ZhanDOu_Wait_Complete）"
     },
     "PVP_PVP_ComeBack_Home": {
         "next": [
