@@ -1,13 +1,13 @@
 {
     "StartGame_Start": {
         "action": "StartApp",
-        "package": "com.y2sgames.girlwarstw",
         "timeout": 200000,
         "next": [
             "StartGame_Skip_Notice",
             "StartGame_Click_Start"
         ],
-        "focus": "【日志】流程开始（StartGame_Start）"
+        "focus": "【日志】流程开始（StartGame_Start）",
+        "package": "com.y2sgames.girlwarstw"
     },
     "StartGame_Skip_Notice": {
         "recognition": "OCR",
@@ -57,13 +57,13 @@
             "點擊",
             "活動結束"
         ],
+        "action": "Click",
         "target": [
             486,
             694,
             13,
             11
         ],
-        "action": "Click",
         "next": [],
         "focus": "【日志】跳过处理（StartGame_Skip_Activity）"
     },
@@ -126,5 +126,5 @@
         "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（StartGame_Call_Backup_Button）"
-    },
+    }
 }

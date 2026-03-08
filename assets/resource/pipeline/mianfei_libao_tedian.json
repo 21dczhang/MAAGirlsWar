@@ -20,13 +20,13 @@
         "focus": "【日志】返回操作（TeDian_Call_Backup_Button）"
     },
     "TeDian_Call_Backup_Button_Direct": {
+        "action": "Click",
         "target": [
             411,
             702,
             10,
             9
         ],
-        "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（TeDian_Call_Backup_Button_Direct）"
     },
@@ -59,7 +59,6 @@
             "TeDian_Find_TeDian",
             "[JumpBack]TeDian_Call_Backup_Button",
             "[JumpBack]TeDian_Call_Backup_Button_Direct"
-            //这里开始主任务，已经回到主界面了
         ],
         "focus": "【日志】主页识别（TeDian_Is_HomePage2）"
     },
@@ -68,14 +67,14 @@
         "template": [
             "特典.png"
         ],
-        "threshold": [
-            0.9
-        ],
         "roi": [
             766,
             -1,
             511,
             149
+        ],
+        "threshold": [
+            0.9
         ],
         "action": "Click",
         "post_delay": 2000,
@@ -92,14 +91,7 @@
             "免费券红点.png",
             "免费券红点2.png",
             "免费券红点3.png",
-            "免费券红点4.png",
-        ],
-        "threshold": [
-            0.9,
-            0.9,
-            0.9,
-            0.9,
-            0.9,
+            "免费券红点4.png"
         ],
         "roi": [
             28,
@@ -107,6 +99,14 @@
             264,
             622
         ],
+        "threshold": [
+            0.9,
+            0.9,
+            0.9,
+            0.9,
+            0.9
+        ],
+        "order_by": "Random",
         "action": "Click",
         "post_delay": 1000,
         "next": [
@@ -116,8 +116,7 @@
         "focus": "【日志】查找目标（TeDian_Find_TeDian_Start）",
         "on_error": [
             "TeDian_TeDian_ComeBack_Home"
-        ],
-        "order_by": "Random"
+        ]
     },
     "TeDian_Find_TeDian_Start_MianFei": {
         "recognition": "TemplateMatch",
@@ -125,13 +124,13 @@
             "免费礼包-特典-一键领取1.png",
             "免费礼包-特典-一键领取2.png",
             "免费礼包-特典-领取.png",
-            "免费礼包-特典-领取2.png",
+            "免费礼包-特典-领取2.png"
         ],
         "threshold": [
             0.9,
             0.9,
             0.9,
-            0.9,
+            0.9
         ],
         "action": "Click",
         "post_delay": 1000,
@@ -144,7 +143,7 @@
         "next": [
             "TeDian_TeDian_ComeBack_Home_Is_HomePage",
             "[JumpBack]TeDian_Call_Backup_Button",
-            "[JumpBack]TeDian_Call_Backup_Button_Direct",
+            "[JumpBack]TeDian_Call_Backup_Button_Direct"
         ],
         "focus": "【日志】回到主页（TeDian_TeDian_ComeBack_Home）"
     },
@@ -159,7 +158,7 @@
         "post_delay": 1500,
         "next": [
             "TeDian_TeDian_ComeBack_Home_Is_HomePage2",
-            "[JumpBack]TeDian_Call_Backup_Button",
+            "[JumpBack]TeDian_Call_Backup_Button"
         ],
         "focus": "【日志】主页识别（TeDian_TeDian_ComeBack_Home_Is_HomePage）"
     },

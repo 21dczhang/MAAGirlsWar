@@ -20,13 +20,13 @@
         "focus": "【日志】返回操作（ChuZhi_Call_Backup_Button）"
     },
     "ChuZhi_Call_Backup_Button_Direct": {
+        "action": "Click",
         "target": [
             411,
             702,
             10,
             9
         ],
-        "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（ChuZhi_Call_Backup_Button_Direct）"
     },
@@ -59,7 +59,6 @@
             "ChuZhi_Find_ChuZhi",
             "[JumpBack]ChuZhi_Call_Backup_Button",
             "[JumpBack]ChuZhi_Call_Backup_Button_Direct"
-            //这里开始主任务，已经回到主界面了
         ],
         "focus": "【日志】主页识别（ChuZhi_Is_HomePage2）"
     },
@@ -68,14 +67,14 @@
         "template": [
             "储值.png"
         ],
-        "threshold": [
-            0.9
-        ],
         "roi": [
             1051,
             0,
             226,
             156
+        ],
+        "threshold": [
+            0.9
         ],
         "action": "Click",
         "post_delay": 2000,
@@ -92,18 +91,20 @@
             "免费券红点.png",
             "免费券红点2.png",
             "免费券红点3.png",
-            "免费券红点4.png",
+            "免费券红点4.png"
         ],
         "threshold": [
             0.9,
             0.9,
             0.9,
             0.9,
-            0.9,
+            0.9
         ],
+        "order_by": "Random",
         "action": "Click",
-        "post_delay": 1000,
         "max_hit": 5,
+        "post_delay": 1000,
+        "timeout": 5000,
         "next": [
             "[JumpBack]ChuZhi_Find_ChuZhi_Start_MianFei1",
             "[JumpBack]ChuZhi_Find_ChuZhi_Start_MianFei2",
@@ -112,9 +113,7 @@
         "focus": "【日志】查找目标（ChuZhi_Find_ChuZhi_Start）",
         "on_error": [
             "ChuZhi_ChuZhi_ComeBack_Home"
-        ],
-        "timeout": 5000,
-        "order_by": "Random"
+        ]
     },
     "ChuZhi_Find_ChuZhi_Start_MianFei1": {
         "recognition": "OCR",
@@ -147,7 +146,7 @@
         "next": [
             "ChuZhi_ChuZhi_ComeBack_Home_Is_HomePage",
             "[JumpBack]ChuZhi_Call_Backup_Button",
-            "[JumpBack]ChuZhi_Call_Backup_Button_Direct",
+            "[JumpBack]ChuZhi_Call_Backup_Button_Direct"
         ],
         "focus": "【日志】回到主页（ChuZhi_ChuZhi_ComeBack_Home）"
     },
@@ -162,7 +161,7 @@
         "post_delay": 1500,
         "next": [
             "ChuZhi_ChuZhi_ComeBack_Home_Is_HomePage2",
-            "[JumpBack]ChuZhi_Call_Backup_Button",
+            "[JumpBack]ChuZhi_Call_Backup_Button"
         ],
         "focus": "【日志】主页识别（ChuZhi_ChuZhi_ComeBack_Home_Is_HomePage）"
     },

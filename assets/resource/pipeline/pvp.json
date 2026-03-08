@@ -30,13 +30,13 @@
         "focus": "【日志】返回操作（PVP_Call_Backup_Button2）"
     },
     "PVP_Call_Backup_Button_Direct": {
+        "action": "Click",
         "target": [
             411,
             702,
             10,
             9
         ],
-        "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（PVP_Call_Backup_Button_Direct）"
     },
@@ -71,18 +71,10 @@
             "[JumpBack]PVP_Call_Backup_Button",
             "[JumpBack]PVP_Call_Backup_Button2",
             "[JumpBack]PVP_Call_Backup_Button_Direct"
-            //这里开始主任务，已经回到主界面了
         ],
         "focus": "【日志】主页识别（PVP_Is_HomePage2）"
     },
     "PVP_PVP_Start": {
-        // "next": [
-        //     "[JumpBack]PVP_PVP_Start_Clip_Up",
-        //     "[JumpBack]PVP_PVP_Selet_Up50_Start",
-        //     //"[JumpBack]PVP_PVP_Start_Clip_Up_One",
-        //     //后续等级够了，在这里写一键执行的任务，上面三个可以删除
-        //     "PVP_PVP_ComeBack_Home"
-        // ],
         "next": [
             "PVP_PVP_Start_Go_PVP"
         ],
@@ -109,23 +101,23 @@
         "template": [
             "竞技场2.png"
         ],
-        "threshold": [
-            0.9
-        ],
-        "action": "Click",
-        "post_delay": 1500,
         "roi": [
             88,
             87,
             1161,
             375
         ],
+        "threshold": [
+            0.9
+        ],
+        "action": "Click",
         "target_offset": [
             0,
             -100,
             0,
             0
         ],
+        "post_delay": 1500,
         "next": [
             "PVP_PVP_Start_Check_CiShu",
             "PVP_PVP_Start_Go_PVP2"
@@ -214,7 +206,7 @@
         "next": [
             "PVP_PVP_ComeBack_Home_Is_HomePage2",
             "[JumpBack]PVP_Call_Backup_Button",
-            "[JumpBack]PVP_Call_Backup_Button2",
+            "[JumpBack]PVP_Call_Backup_Button2"
         ],
         "focus": "【日志】主页识别（PVP_PVP_ComeBack_Home_Is_HomePage）"
     },

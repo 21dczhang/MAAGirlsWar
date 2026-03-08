@@ -20,13 +20,13 @@
         "focus": "【日志】返回操作（Daily_Task_Call_Backup_Button）"
     },
     "Daily_Task_Call_Backup_Button_Direct": {
+        "action": "Click",
         "target": [
             411,
             702,
             10,
             9
         ],
-        "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（Daily_Task_Call_Backup_Button_Direct）"
     },
@@ -59,7 +59,6 @@
             "Daily_Task_Find_Daily_Task",
             "[JumpBack]Daily_Task_Call_Backup_Button",
             "[JumpBack]Daily_Task_Call_Backup_Button_Direct"
-            //这里开始主任务，已经回到主界面了
         ],
         "focus": "【日志】主页识别（Daily_Task_Is_HomePage2）"
     },
@@ -73,7 +72,7 @@
         ],
         "action": "Click",
         "next": [
-            "Daily_Task_Daily_Task_Start",
+            "Daily_Task_Daily_Task_Start"
         ],
         "focus": "【日志】查找目标（Daily_Task_Find_Daily_Task）"
     },
@@ -127,14 +126,14 @@
         "template": [
             "免费券红点.png"
         ],
-        "threshold": [
-            0.7
-        ],
         "roi": [
             284,
             87,
             874,
             77
+        ],
+        "threshold": [
+            0.7
         ],
         "action": "Click",
         "timeout": 5000,
@@ -148,14 +147,14 @@
         "template": [
             "免费券红点.png"
         ],
-        "threshold": [
-            0.7
-        ],
         "roi": [
             284,
             87,
             874,
             77
+        ],
+        "threshold": [
+            0.7
         ],
         "action": "Click",
         "post_delay": 500,
@@ -221,7 +220,7 @@
         "next": [
             "Daily_Task_Daily_Task_ComeBack_Home_Is_HomePage",
             "[JumpBack]Daily_Task_Call_Backup_Button",
-            "[JumpBack]Daily_Task_Call_Backup_Button_Direct",
+            "[JumpBack]Daily_Task_Call_Backup_Button_Direct"
         ],
         "focus": "【日志】回到主页（Daily_Task_Daily_Task_ComeBack_Home）"
     },
@@ -236,7 +235,7 @@
         "post_delay": 1500,
         "next": [
             "Daily_Task_Daily_Task_ComeBack_Home_Is_HomePage2",
-            "[JumpBack]Daily_Task_Call_Backup_Button",
+            "[JumpBack]Daily_Task_Call_Backup_Button"
         ],
         "focus": "【日志】主页识别（Daily_Task_Daily_Task_ComeBack_Home_Is_HomePage）"
     },

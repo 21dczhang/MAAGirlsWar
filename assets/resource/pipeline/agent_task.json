@@ -1,69 +1,10 @@
-// {
-//     "开始遍历": {
-//         "recognition": "DirectHit",
-//         "action": "Custom",
-//         "custom_action": "TraverseAndExecute",
-//         "custom_action_param": {
-//             "template": "免费券红点.png",
-//             "threshold": 0.7,
-//             "roi": [
-//                 0,
-//                 0,
-//                 1280,
-//                 720
-//             ],
-//             "action_sequence": [
-//                 "TaskA"
-//             ], // 入口任务
-//             "last_task": "TaskB", // TaskA 子流程最后一个节点
-//             "after_all": "TaskC",
-//             "after_all_last_task": "TaskC", // TaskC 只有一个节点，填自身即可
-//             "stop_condition": {
-//                 "type": "ocr",
-//                 "target": "料理屋",
-//                 "roi": [
-//                     0,
-//                     0,
-//                     1280,
-//                     720
-//                 ]
-//             }
-//         }
-//     },
-//     "TaskA": {
-//         "recognition": "OCR",
-//         "expected": [
-//             "1"
-//         ],
-//         "action": "DoNothing",
-//         "next": [
-//             "TaskB"
-//         ]
-//     },
-//     "TaskB": {
-//         "recognition": "OCR",
-//         "expected": [
-//             "1"
-//         ],
-//         "action": "DoNothing"
-//     },
-//     "TaskC": {
-//         "recognition": "OCR",
-//         "expected": [
-//             "1"
-//         ],
-//         "action": "DoNothing"
-//     }
-// }
 {
     "StartTraverse": {
         "action": "Custom",
+        "focus": "【日志】流程开始（StartTraverse）",
         "custom_action": "TraverseAndClick",
         "custom_action_param": {
-            // ── 识别方式 ──────────────────────────────────────
-            // "method": "template" | "ocr"
             "method": "template",
-            // [template] 待匹配的模板图片文件名（resource 目录下的路径）
             "template": "免费券红点.png",
             "roi": [
                 8,
@@ -71,33 +12,17 @@
                 148,
                 628
             ],
-            // [ocr] 待匹配的文字列表，命中其中任意一项即算匹配
-            // "ocr_text": ["词A", "词B"],
-            // 匹配分数阈值（0~1），高于此值才纳入遍历
             "threshold": 0.7,
-            // ── 终止条件 ──────────────────────────────────────
-            // "stop_method": "template" | "ocr"
             "stop_method": "ocr",
-            // [template] 终止条件：识别到该图片则停止
-            // "stop_template": "ui/end_screen.png",
-            // [ocr] 终止条件：OCR 识别到包含以下任一字符串则停止
             "stop_ocr_text": [
-                "屋",
+                "屋"
             ],
-            // ── 任务配置 ──────────────────────────────────────
-            // 点击每个匹配项后执行的任务节点名
             "task_each": "TaskA",
-            // 每轮遍历全部结束后执行的任务节点名
             "task_after_round": "Swipe_Once",
-            // ── 可选配置 ──────────────────────────────────────
-            // 两次识别之间的等待时间（秒），默认 0.5
             "round_delay": 0.5,
-            // 每次点击后、执行 task_each 前的等待时间（秒），默认 0.3
             "click_delay": 0.3,
-            // 最大循环轮数，防止死循环，默认 50，设为 -1 表示不限制
             "max_rounds": 50
-        },
-        "focus": "【日志】流程开始（StartTraverse）"
+        }
     },
     "TaskA": {
         "next": [
@@ -112,6 +37,7 @@
     },
     "Swipe_Once": {
         "action": "Swipe",
+        "focus": "【日志】滑动处理（Swipe_Once）",
         "begin": [
             140,
             680
@@ -285,7 +211,6 @@
                 140,
                 60
             ]
-        ],
-        "focus": "【日志】滑动处理（Swipe_Once）"
-    },
+        ]
+    }
 }

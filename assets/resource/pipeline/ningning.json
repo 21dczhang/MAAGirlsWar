@@ -86,14 +86,14 @@
         "template": [
             "一键执行.png"
         ],
-        "threshold": [
-            0.9
-        ],
         "roi": [
             1042,
             532,
             232,
             163
+        ],
+        "threshold": [
+            0.9
         ],
         "action": "Click",
         "max_hit": 1,
@@ -110,14 +110,14 @@
         "template": [
             "一键执行.png"
         ],
-        "threshold": [
-            0.9
-        ],
         "roi": [
             1042,
             532,
             232,
             163
+        ],
+        "threshold": [
+            0.9
         ],
         "action": "Click",
         "next": [
@@ -256,13 +256,13 @@
         "expected": [
             "繼續"
         ],
+        "action": "Click",
         "target": [
             482,
             698,
             11,
             8
         ],
-        "action": "Click",
         "next": [
             "NingNing_NingNing_ComeBack_Home",
             "[JumpBack]NingNing_Call_Backup_Button",
@@ -281,7 +281,7 @@
         "post_delay": 1500,
         "next": [
             "NingNing_NingNing_ComeBack_Home_Is_HomePage2",
-            "[JumpBack]NingNing_Call_Backup_Button",
+            "[JumpBack]NingNing_Call_Backup_Button"
         ],
         "focus": "【日志】主页识别（NingNing_NingNing_ComeBack_Home_Is_HomePage）"
     },

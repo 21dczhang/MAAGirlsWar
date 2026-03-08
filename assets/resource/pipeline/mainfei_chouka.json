@@ -39,24 +39,24 @@
         "focus": "【日志】返回操作（MianFeiChouKa_Call_QueDing）"
     },
     "MianFeiChouKa_Call_Backup_Button_Direct": {
+        "action": "Click",
         "target": [
             411,
             702,
             10,
             9
         ],
-        "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（MianFeiChouKa_Call_Backup_Button_Direct）"
     },
     "MianFeiChouKa_Call_Backup_Button_Direct_Double": {
+        "action": "Click",
         "target": [
             411,
             702,
             10,
             9
         ],
-        "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（MianFeiChouKa_Call_Backup_Button_Direct_Double）",
         "repeat": 2
@@ -90,7 +90,6 @@
             "MianFeiChouKa_Find_MianFeiChouKa",
             "[JumpBack]MianFeiChouKa_Call_Backup_Button",
             "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct"
-            //这里开始主任务，已经回到主界面了
         ],
         "focus": "【日志】主页识别（MianFeiChouKa_Is_HomePage2）"
     },
@@ -122,6 +121,7 @@
     },
     "MianFeiChouKa_MianFeiChouKa_Swip_Once": {
         "action": "Swipe",
+        "focus": "【日志】抽卡任务处理（MianFeiChouKa_MianFeiChouKa_Swip_Once）",
         "begin": [
             140,
             680
@@ -295,18 +295,16 @@
                 140,
                 60
             ]
-        ],
-        "focus": "【日志】抽卡任务处理（MianFeiChouKa_MianFeiChouKa_Swip_Once）"
+        ]
     },
     "MianFeiChouKa_MianFeiChouKa_Find_MianFeiChouKa_And_Click": {
         "recognition": "DirectHit",
         "action": "Custom",
+        "max_hit": 1,
+        "focus": "【日志】点击处理（MianFeiChouKa_MianFeiChouKa_Find_MianFeiChouKa_And_Click）",
         "custom_action": "TraverseAndClick",
         "custom_action_param": {
-            // ── 识别方式 ──────────────────────────────────────
-            // "method": "template" | "ocr"
             "method": "template",
-            // [template] 待匹配的模板图片文件名（resource 目录下的路径）
             "template": "免费券红点.png",
             "roi": [
                 8,
@@ -314,18 +312,10 @@
                 148,
                 628
             ],
-            // [ocr] 待匹配的文字列表，命中其中任意一项即算匹配
-            // "ocr_text": ["词A", "词B"],
-            // 匹配分数阈值（0~1），高于此值才纳入遍历
             "threshold": 0.7,
-            // ── 终止条件 ──────────────────────────────────────
-            // "stop_method": "template" | "ocr"
             "stop_method": "ocr",
-            // [template] 终止条件：识别到该图片则停止
-            // "stop_template": "ui/end_screen.png",
-            // [ocr] 终止条件：OCR 识别到包含以下任一字符串则停止
             "stop_ocr_text": [
-                "屋",
+                "屋"
             ],
             "stop_roi": [
                 8,
@@ -333,21 +323,12 @@
                 148,
                 628
             ],
-            // ── 任务配置 ──────────────────────────────────────
-            // 点击每个匹配项后执行的任务节点名
             "task_each": "MianFeiChouKa_MianFeiChouKa_Select_Type_Start",
-            // 每轮遍历全部结束后执行的任务节点名
             "task_after_round": "MianFeiChouKa_MianFeiChouKa_Swip_Once",
-            // ── 可选配置 ──────────────────────────────────────
-            // 两次识别之间的等待时间（秒），默认 0.5
             "round_delay": 0.5,
-            // 每次点击后、执行 task_each 前的等待时间（秒），默认 0.3
             "click_delay": 0.3,
-            // 最大循环轮数，防止死循环，默认 50，设为 -1 表示不限制
             "max_rounds": 10
-        },
-        "max_hit": 1,
-        "focus": "【日志】点击处理（MianFeiChouKa_MianFeiChouKa_Find_MianFeiChouKa_And_Click）"
+        }
     },
     "MianFeiChouKa_MianFeiChouKa_Select_Type_Start": {
         "timeout": 6000,
@@ -447,8 +428,8 @@
             0.6
         ],
         "action": "Click",
-        "timeout": 9000,
         "post_delay": 3000,
+        "timeout": 9000,
         "next": [
             "[JumpBack]MianFeiChouKa_MianFeiChouKa_WuShuang_And_LiaoLi_Click_Result_CallBack",
             "MianFeiChouKa_MianFeiChouKa_WuShuang_And_LiaoLi_Click"
@@ -488,7 +469,7 @@
         "next": [
             "MianFeiChouKa_MianFeiChouKa_ComeBack_Home_Is_HomePage",
             "[JumpBack]MianFeiChouKa_Call_Backup_Button",
-            "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button_Direct"
         ],
         "focus": "【日志】回到主页（MianFeiChouKa_MianFeiChouKa_ComeBack_Home）"
     },
@@ -503,7 +484,7 @@
         "post_delay": 1500,
         "next": [
             "MianFeiChouKa_MianFeiChouKa_ComeBack_Home_Is_HomePage2",
-            "[JumpBack]MianFeiChouKa_Call_Backup_Button",
+            "[JumpBack]MianFeiChouKa_Call_Backup_Button"
         ],
         "focus": "【日志】主页识别（MianFeiChouKa_MianFeiChouKa_ComeBack_Home_Is_HomePage）"
     },
@@ -529,5 +510,5 @@
             628
         ],
         "focus": "【日志】节点执行（test1）"
-    },
+    }
 }

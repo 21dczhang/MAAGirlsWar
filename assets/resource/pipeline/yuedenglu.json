@@ -30,13 +30,13 @@
         "focus": "【日志】返回操作（YueDengLu_Call_Backup_Button2）"
     },
     "YueDengLu_Call_Backup_Button_Direct": {
+        "action": "Click",
         "target": [
             411,
             702,
             10,
             9
         ],
-        "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（YueDengLu_Call_Backup_Button_Direct）"
     },
@@ -71,7 +71,6 @@
             "[JumpBack]YueDengLu_Call_Backup_Button",
             "[JumpBack]YueDengLu_Call_Backup_Button2",
             "[JumpBack]YueDengLu_Call_Backup_Button_Direct"
-            //这里开始主任务，已经回到主界面了
         ],
         "focus": "【日志】主页识别（YueDengLu_Is_HomePage2）"
     },
@@ -86,7 +85,8 @@
         "next": [
             "YueDengLu_YueDengLu_Start_Find_YueDengLu",
             "[JumpBack]YueDengLu_YueDengLu_Start_Find_YueDengLu_Swip_Once"
-        ]
+        ],
+        "focus": "【日志】节点执行（YueDengLu_YueDengLu_Start_Find_YueDengLu_Start）"
     },
     "YueDengLu_YueDengLu_Start_Find_YueDengLu": {
         "recognition": "OCR",
@@ -102,7 +102,8 @@
         "action": "Click",
         "next": [
             "YueDengLu_YueDengLu_Start_Find_YueDengLu2"
-        ]
+        ],
+        "focus": "【日志】查找目标（YueDengLu_YueDengLu_Start_Find_YueDengLu）"
     },
     "YueDengLu_YueDengLu_Start_Find_YueDengLu2": {
         "recognition": "OCR",
@@ -117,18 +118,18 @@
         ],
         "action": "Click",
         "post_delay": 1500,
+        "timeout": 5000,
         "next": [
             "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_JinRiJiangLi",
             "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_3日奖励",
             "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_7日奖励",
             "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_15日奖励",
-            "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_25日奖励",
+            "[JumpBack]YueDengLu_YueDengLu_Start_LingQu_25日奖励"
         ],
-        "timeout": 5000
+        "focus": "【日志】查找目标（YueDengLu_YueDengLu_Start_Find_YueDengLu2）"
     },
     "YueDengLu_YueDengLu_Start_LingQu_JinRiJiangLi": {
         "recognition": "OCR",
-        "max_hit": 1,
         "expected": [
             "本日"
         ],
@@ -139,17 +140,24 @@
             408
         ],
         "action": "Click",
+        "max_hit": 1,
         "post_delay": 1000,
         "next": [
             "YueDengLu_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】点击处理（YueDengLu_YueDengLu_Start_LingQu_JinRiJiangLi）"
     },
     "YueDengLu_YueDengLu_Start_LingQu_3日奖励": {
         "recognition": "OCR",
-        "max_hit": 1,
         "expected": [
             "3"
         ],
+        "roi": [
+            458,
+            118,
+            700,
+            86
+        ],
         "action": "Click",
         "target_offset": [
             0,
@@ -157,23 +165,24 @@
             0,
             0
         ],
-        "roi": [
-            458,
-            118,
-            700,
-            86
-        ],
+        "max_hit": 1,
         "post_delay": 500,
         "next": [
             "YueDengLu_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】点击处理（YueDengLu_YueDengLu_Start_LingQu_3日奖励）"
     },
     "YueDengLu_YueDengLu_Start_LingQu_7日奖励": {
         "recognition": "OCR",
-        "max_hit": 1,
         "expected": [
             "7"
         ],
+        "roi": [
+            458,
+            118,
+            700,
+            86
+        ],
         "action": "Click",
         "target_offset": [
             0,
@@ -181,23 +190,24 @@
             0,
             0
         ],
-        "roi": [
-            458,
-            118,
-            700,
-            86
-        ],
+        "max_hit": 1,
         "post_delay": 500,
         "next": [
             "YueDengLu_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】点击处理（YueDengLu_YueDengLu_Start_LingQu_7日奖励）"
     },
     "YueDengLu_YueDengLu_Start_LingQu_15日奖励": {
         "recognition": "OCR",
-        "max_hit": 1,
         "expected": [
             "15日"
         ],
+        "roi": [
+            458,
+            118,
+            700,
+            86
+        ],
         "action": "Click",
         "target_offset": [
             0,
@@ -205,22 +215,23 @@
             0,
             0
         ],
-        "roi": [
-            458,
-            118,
-            700,
-            86
-        ],
+        "max_hit": 1,
         "post_delay": 500,
         "next": [
             "YueDengLu_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】点击处理（YueDengLu_YueDengLu_Start_LingQu_15日奖励）"
     },
     "YueDengLu_YueDengLu_Start_LingQu_25日奖励": {
         "recognition": "OCR",
-        "max_hit": 1,
         "expected": [
             "25日"
+        ],
+        "roi": [
+            458,
+            118,
+            700,
+            86
         ],
         "action": "Click",
         "target_offset": [
@@ -229,16 +240,12 @@
             0,
             0
         ],
-        "roi": [
-            458,
-            118,
-            700,
-            86
-        ],
+        "max_hit": 1,
         "post_delay": 500,
         "next": [
             "YueDengLu_Call_Backup_Button_Direct"
-        ]
+        ],
+        "focus": "【日志】点击处理（YueDengLu_YueDengLu_Start_LingQu_25日奖励）"
     },
     "YueDengLu_YueDengLu_Start_Find_YueDengLu_Swip_Once": {
         "action": "Swipe",
@@ -250,6 +257,7 @@
             45,
             212
         ],
+        "focus": "【日志】滑动处理（YueDengLu_YueDengLu_Start_Find_YueDengLu_Swip_Once）"
     },
     "YueDengLu_YueDengLu_ComeBack_Home": {
         "next": [
@@ -272,7 +280,7 @@
         "next": [
             "YueDengLu_YueDengLu_ComeBack_Home_Is_HomePage2",
             "[JumpBack]YueDengLu_Call_Backup_Button",
-            "[JumpBack]YueDengLu_Call_Backup_Button2",
+            "[JumpBack]YueDengLu_Call_Backup_Button2"
         ],
         "focus": "【日志】主页识别（YueDengLu_YueDengLu_ComeBack_Home_Is_HomePage）"
     },

@@ -11,8 +11,8 @@
     "MyTask4": {
         "recognition": "Custom",
         "action": "Custom",
-        "custom_action": "my_action_111",
         "focus": "【日志】节点执行（MyTask4）",
+        "custom_action": "my_action_111",
         "custom_recognition": "my_reco_222"
     },
     "OcrTask": {

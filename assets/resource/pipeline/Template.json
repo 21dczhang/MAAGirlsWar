@@ -30,13 +30,13 @@
         "focus": "【日志】返回操作（Template2_Call_Backup_Button2）"
     },
     "Template2_Call_Backup_Button_Direct": {
+        "action": "Click",
         "target": [
             411,
             702,
             10,
             9
         ],
-        "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（Template2_Call_Backup_Button_Direct）"
     },
@@ -71,44 +71,19 @@
             "[JumpBack]Template2_Call_Backup_Button",
             "[JumpBack]Template2_Call_Backup_Button2",
             "[JumpBack]Template2_Call_Backup_Button_Direct"
-            //这里开始主任务，已经回到主界面了
         ],
         "focus": "【日志】主页识别（Template2_Is_HomePage2）"
     },
     "Template2_Find_Template2": {
-        // "recognition": "DirectHit",
-        // "action": "Click",
-        // "target": [
-        //     100,
-        //     196,
-        //     101,
-        //     46
-        // ],
         "next": [
             "Template2_Template2_Start",
             "[JumpBack]Template2_Call_Backup_Button",
             "[JumpBack]Template2_Call_Backup_Button2",
             "[JumpBack]Template2_Call_Backup_Button_Direct"
         ],
-        // "recognition": "DirectHit",
-        // "action": "Click",
-        // "target": [
-        //     100,
-        //     196,
-        //     101,
-        //     46
-        // ],
         "focus": "【日志】查找目标（Template2_Find_Template2）"
-        // "focus": "点击活动栏"
     },
     "Template2_Template2_Start": {
-        // "next": [
-        //     "[JumpBack]Template2_Template2_Start_Clip_Up",
-        //     "[JumpBack]Template2_Template2_Selet_Up50_Start",
-        //     //"[JumpBack]Template2_Template2_Start_Clip_Up_One",
-        //     //后续等级够了，在这里写一键执行的任务，上面三个可以删除
-        //     "Template2_Template2_ComeBack_Home"
-        // ],
         "next": [],
         "focus": "【日志】流程开始（Template2_Template2_Start）"
     },
@@ -133,7 +108,7 @@
         "next": [
             "Template2_Template2_ComeBack_Home_Is_HomePage2",
             "[JumpBack]Template2_Call_Backup_Button",
-            "[JumpBack]Template2_Call_Backup_Button2",
+            "[JumpBack]Template2_Call_Backup_Button2"
         ],
         "focus": "【日志】主页识别（Template2_Template2_ComeBack_Home_Is_HomePage）"
     },

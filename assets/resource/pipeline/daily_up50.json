@@ -20,13 +20,13 @@
         "focus": "【日志】返回操作（Daily_UP50_Call_Backup_Button）"
     },
     "Daily_UP50_Call_Backup_Button_Direct": {
+        "action": "Click",
         "target": [
             411,
             702,
             10,
             9
         ],
-        "action": "Click",
         "post_delay": 1500,
         "focus": "【日志】返回操作（Daily_UP50_Call_Backup_Button_Direct）"
     },
@@ -59,43 +59,18 @@
             "Daily_UP50_Find_Daily_UP50",
             "[JumpBack]Daily_UP50_Call_Backup_Button",
             "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
-            //这里开始主任务，已经回到主界面了
         ],
         "focus": "【日志】主页识别（Daily_UP50_Is_HomePage2）"
     },
     "Daily_UP50_Find_Daily_UP50": {
-        // "recognition": "DirectHit",
-        // "action": "Click",
-        // "target": [
-        //     100,
-        //     196,
-        //     101,
-        //     46
-        // ],
         "next": [
             "Daily_UP50_Daily_UP50_Start",
             "[JumpBack]Daily_UP50_Call_Backup_Button",
             "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
         ],
-        // "recognition": "DirectHit",
-        // "action": "Click",
-        // "target": [
-        //     100,
-        //     196,
-        //     101,
-        //     46
-        // ],
         "focus": "【日志】查找目标（Daily_UP50_Find_Daily_UP50）"
-        // "focus": "点击活动栏"
     },
     "Daily_UP50_Daily_UP50_Start": {
-        // "next": [
-        //     "[JumpBack]Daily_UP50_Daily_UP50_Start_Clip_Up",
-        //     "[JumpBack]Daily_UP50_Daily_UP50_Selet_Up50_Start",
-        //     //"[JumpBack]Daily_UP50_Daily_UP50_Start_Clip_Up_One",
-        //     //后续等级够了，在这里写一键执行的任务，上面三个可以删除
-        //     "Daily_UP50_Daily_UP50_ComeBack_Home"
-        // ],
         "next": [
             "[JumpBack]Daily_UP50_Daily_UP50_Selet_Up50_Start",
             "Daily_UP50_Daily_UP50_ComeBack_Home"
@@ -106,7 +81,7 @@
         "max_hit": 50,
         "next": [
             "Daily_UP50_Daily_UP50_Click_Up50",
-            "Daily_UP50_Daily_UP50_Click_Up50_Inverse",
+            "Daily_UP50_Daily_UP50_Click_Up50_Inverse"
         ],
         "focus": "【日志】流程开始（Daily_UP50_Daily_UP50_Selet_Up50_Start）"
     },
@@ -116,14 +91,14 @@
             "50%2.png",
             "小窗口-50%箭头.png"
         ],
-        "threshold": [
-            0.6
-        ],
         "roi": [
             22,
             166,
             230,
             101
+        ],
+        "threshold": [
+            0.6
         ],
         "action": "Click",
         "next": [
@@ -137,16 +112,17 @@
         "template": [
             "50%2.png"
         ],
-        "threshold": [
-            0.5
-        ],
         "roi": [
             22,
             166,
             230,
             101
         ],
+        "threshold": [
+            0.5
+        ],
         "action": "Swipe",
+        "focus": "【日志】点击处理（Daily_UP50_Daily_UP50_Click_Up50_Inverse）",
         "begin": [
             212,
             212
@@ -155,7 +131,6 @@
             45,
             212
         ],
-        "focus": "【日志】点击处理（Daily_UP50_Daily_UP50_Click_Up50_Inverse）",
         "inverse": true
     },
     "Daily_UP50_Daily_UP50_Click_Up50_Is_Claimed": {
@@ -163,18 +138,18 @@
         "template": [
             "免费券红点.png"
         ],
-        "threshold": [
-            0.5
-        ],
         "roi": [
             1164,
             64,
             31,
             171
         ],
+        "threshold": [
+            0.5
+        ],
         "action": "Click",
-        "timeout": 20000,
         "post_delay": 5000,
+        "timeout": 20000,
         "next": [
             "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_MianFei",
             "Daily_UP50_Daily_UP50_Click_Up50_Is_GuMuTanXian",
@@ -239,10 +214,10 @@
         "threshold": [
             0.8
         ],
+        "order_by": "Horizontal",
         "action": "Click",
         "focus": "【日志】点击处理（Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_50）",
-        "index": -1,
-        "order_by": "Horizontal"
+        "index": -1
     },
     "Daily_UP50_Daily_UP50_Click_Up50_Claimed_Click_JueSe": {
         "recognition": "OCR",
@@ -326,7 +301,7 @@
         "next": [
             "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage",
             "[JumpBack]Daily_UP50_Call_Backup_Button",
-            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct",
+            "[JumpBack]Daily_UP50_Call_Backup_Button_Direct"
         ],
         "focus": "【日志】回到主页（Daily_UP50_Daily_UP50_ComeBack_Home）"
     },
@@ -341,7 +316,7 @@
         "post_delay": 1500,
         "next": [
             "Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage2",
-            "[JumpBack]Daily_UP50_Call_Backup_Button",
+            "[JumpBack]Daily_UP50_Call_Backup_Button"
         ],
         "focus": "【日志】主页识别（Daily_UP50_Daily_UP50_ComeBack_Home_Is_HomePage）"
     },
